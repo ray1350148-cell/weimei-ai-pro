@@ -1197,6 +1197,36 @@
     </div>
   </div>
 
+  <!-- ==================== CASE DETAIL MODAL ==================== -->
+  <div class="article-overlay" id="caseDetailOverlay">
+    <div class="article-modal" id="caseDetailModal">
+      <div class="article-header">
+        <button class="close-btn" onclick="closeCaseDetail()"><i class="fas fa-xmark"></i></button>
+        <div class="article-cat" id="caseDetailCat">分类</div>
+        <h2 id="caseDetailTitle">案例名称</h2>
+      </div>
+      <div class="article-body" id="caseDetailBody">
+        <div class="article-img-placeholder cinema-bg-1" id="caseDetailImage" style="display:flex;align-items:center;justify-content:center;">
+          <i class="fas fa-sculpture" style="font-size:48px;color:var(--gold);"></i>
+        </div>
+        <p id="caseDetailDesc">描述加载中...</p>
+        <div style="margin-top:20px;padding:16px;background:var(--bg-deep);border-radius:12px;border:1px solid var(--border-subtle);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <i class="fas fa-lightbulb" style="color:var(--gold);font-size:16px;"></i>
+            <span style="font-size:14px;font-weight:600;color:var(--text-primary);">美学分析建议</span>
+          </div>
+          <p id="caseDetailAdvice" style="font-size:13px;color:var(--text-muted);line-height:1.8;">
+            该案例展示了AI模拟的美学设计方案。实际效果需结合个人面部特征和医生面诊确定。建议：术前做好三维模拟，选择正规医疗机构。
+          </p>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:4px;flex-wrap:wrap;" id="caseDetailTags"></div>
+        <p style="margin-top:24px;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border-subtle);padding-top:16px;">
+          ⚠️ 效果为AI模拟，不构成医疗建议。具体方案需正规医生面诊后确定。
+        </p>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== ARTICLE MODAL ==================== -->
   <div class="article-overlay" id="articleOverlay">
     <div class="article-modal" id="articleModal">
@@ -1422,7 +1452,7 @@
         : caseData.filter(c => c.cat === currentCat);
 
       grid.innerHTML = filtered.map(c => `
-        <div class="case-item fade-in">
+        <div class="case-item fade-in" onclick="openCaseDetail(${caseData.indexOf(c)})" style="cursor:pointer;">
           <div class="case-img">
             <div class="case-bg" style="background-image: url('${c.image}');"></div>
             <div class="cinema-overlay">
@@ -1495,6 +1525,38 @@
       document.getElementById('articleOverlay').classList.remove('active');
       document.body.style.overflow = '';
     }
+
+    // ===== CASE DETAIL =====
+    function openCaseDetail(index) {
+      const c = caseData[index];
+      if (!c) return;
+      document.getElementById('caseDetailCat').textContent = c.cat;
+      document.getElementById('caseDetailTitle').textContent = c.title;
+      document.getElementById('caseDetailDesc').textContent = c.desc;
+      const img = document.getElementById('caseDetailImage');
+      img.style.backgroundImage = `url('${c.image}')`;
+      img.style.backgroundSize = 'cover';
+      img.style.backgroundPosition = 'center';
+      img.innerHTML = '<span style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--gold);background:rgba(0,0,0,0.6);padding:4px 14px;border-radius:8px;letter-spacing:1px;">3D 电影级雕塑 · AI生成</span>';
+      // Tags
+      const tags = document.getElementById('caseDetailTags');
+      tags.innerHTML = `
+        <span style="padding:4px 12px;border-radius:12px;background:rgba(212,168,75,0.08);color:var(--gold);font-size:11px;border:1px solid rgba(212,168,75,0.15);">${c.cat}</span>
+        <span style="padding:4px 12px;border-radius:12px;background:rgba(212,168,75,0.08);color:var(--gold);font-size:11px;border:1px solid rgba(212,168,75,0.15);">3D雕塑模拟</span>
+        <span style="padding:4px 12px;border-radius:12px;background:rgba(212,168,75,0.08);color:var(--gold);font-size:11px;border:1px solid rgba(212,168,75,0.15);">美学分析</span>
+      `;
+      document.getElementById('caseDetailOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCaseDetail() {
+      document.getElementById('caseDetailOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('caseDetailOverlay').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeCaseDetail();
+    });
 
     document.getElementById('articleOverlay').addEventListener('click', e => {
       if (e.target === e.currentTarget) closeArticle();
