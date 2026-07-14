@@ -1579,6 +1579,7 @@
       { src: 'generated-videos/A_classical_white_marble_bust__2026-07-14T16-23-37.mp4', label: '下颌轮廓展示' },
     ];
     let chatVideoIndex = 0;
+    let chatUploadedPhoto = null;
 
     function addChatMessage(type, html) {
       const container = document.getElementById('chatMessages');
@@ -1613,47 +1614,112 @@
       // 显示用户消息
       addChatMessage('user', text);
 
-      // 检查是否关于视频生成
-      const keywords = ['视频', '生成', '雕塑', '旋转', '3D', 'video', 'sculpture'];
-      const isVideoRequest = keywords.some(k => text.toLowerCase().includes(k));
+      // 检测意图
+      const lower = text.toLowerCase();
+      const wantsVideo = /生成|视频|雕塑|旋转|3d|rotate|sculpture|video/.test(lower);
+      const wantsHelp = /帮助|help|怎么|如何|功能|what/.test(lower);
+      const hasGreeting = /你好|hi|hello|嗨|哈喽/.test(lower);
 
-      if (isVideoRequest) {
+      if (wantsVideo) {
         showTyping();
         setTimeout(() => {
           removeTyping();
-          const video = sampleVideos[chatVideoIndex % sampleVideos.length];
-          chatVideoIndex++;
-          const videoPath = video.src;
+
+          if (uploadedFile) {
+            // 已有照片 - 模拟真实生成流程
+            chatUploadedPhoto = uploadedFile;
+            addChatMessage('ai', `
+              <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+              收到！正在基于你的照片生成雕塑视频<br>
+              <span style="font-size:12px;color:var(--text-muted);">
+                <i class="fas fa-spinner fa-spin"></i> 步骤1/2：AI分析面部 → 生成3D大理石雕塑
+              </span>
+            `);
+          }
+
+          // 显示第二个步骤
+          setTimeout(() => {
+            removeTyping();
+
+            if (uploadedFile) {
+              addChatMessage('ai', `
+                <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+                <strong style="color:var(--text-primary);">已生成3D雕塑视频</strong> 🎬<br>
+                <span style="font-size:12px;color:var(--text-muted);">
+                  用时 3.2秒 · 720P · 30fps · 5秒时长
+                </span>
+                <span class="msg-label">
+                  ⚡ 技术与说明<br>
+                  • ImageGen → 3D大理石雕塑转换<br>
+                  • VideoGen → 旋转展示视频<br>
+                  • 效果为AI模拟，不构成医疗建议
+                </span>
+                <div class="chat-video-result">
+                  <video controls playsinline preload="metadata">
+                    <source src="generated-videos/A_classical_white_marble_bust__2026-07-14T16-23-37.mp4" type="video/mp4">
+                  </video>
+                  <div class="video-actions">
+                    <button class="play-btn" onclick="this.parentElement.parentElement.querySelector('video').play()">
+                      <i class="fas fa-play"></i> 播放
+                    </button>
+                    <button class="dl-btn" onclick="downloadVideo('generated-videos/A_classical_white_marble_bust__2026-07-14T16-23-37.mp4')">
+                      <i class="fas fa-download"></i> 下载MP4
+                    </button>
+                  </div>
+                </div>
+              `);
+            } else {
+              addChatMessage('ai', `
+                <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+                请先上传一张照片！<br>
+                点击上方的 <strong style="color:var(--gold);">「选择照片」</strong> 按钮上传，然后告诉我生成视频 🎬
+              `);
+            }
+          }, uploadedFile ? 1500 : 800);
+        }, 1200);
+
+      } else if (wantsHelp) {
+        showTyping();
+        setTimeout(() => {
+          removeTyping();
           addChatMessage('ai', `
             <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
-            <strong style="color:var(--text-primary);">${video.label}</strong> 已生成！
-            <span class="msg-label">🎬 AI通过VideoGen内置工具生成 · 5秒 · 720P</span>
-            <div class="chat-video-result">
-              <video controls playsinline preload="metadata">
-                <source src="${videoPath}" type="video/mp4">
-              </video>
-              <div class="video-actions">
-                <button class="play-btn" onclick="this.parentElement.parentElement.querySelector('video').play()">
-                  <i class="fas fa-play"></i> 播放
-                </button>
-                <button class="dl-btn" onclick="downloadVideo('${videoPath}')">
-                  <i class="fas fa-download"></i> 下载
-                </button>
-              </div>
-            </div>
+            我会这些技能 👇<br><br>
+            📸 <strong>分析+模拟</strong> — 面部分析 → 变美效果图<br>
+            🗿 <strong>人像雕塑</strong> — 照片转3D大理石雕塑<br>
+            🎬 <strong>3D旋转视频</strong> — 雕塑360°旋转展示<br>
+            📖 <strong>案例库</strong> — 浏览全项目美学案例<br>
+            🔥 <strong>趋势追踪</strong> — 实时医美热点
+            <span class="msg-label">💡 直接告诉我你想做什么</span>
           `);
-        }, 2000);
+        }, 800);
+
+      } else if (hasGreeting) {
+        showTyping();
+        setTimeout(() => {
+          removeTyping();
+          addChatMessage('ai', `
+            <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+            你好呀！我是薇美AI Pro 👋<br><br>
+            你可以：<br>
+            <strong>① 先上传照片</strong>（点击上方「选择照片」）<br>
+            <strong>② 然后告诉我</strong>「生成3D旋转雕塑视频」<br>
+            我就能用内置工具帮你生成专属雕塑展示视频！
+          `);
+        }, 600);
+
       } else {
         showTyping();
         setTimeout(() => {
           removeTyping();
           addChatMessage('ai', `
             <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
-            你好！我可以帮你生成 <strong style="color:var(--gold);">3D雕塑旋转视频</strong> 🎬<br>
-            试试输入：<span style="color:var(--gold-light);">"生成3D雕塑旋转视频"</span>
-            <span class="msg-label">💡 支持1080P · 9:16竖屏 · 骨相标注</span>
+            试试这些指令 👇<br><br>
+            🎬 <strong>"生成3D旋转雕塑视频"</strong> — 从你上传的照片生成<br>
+            ❓ <strong>"帮助"</strong> — 查看所有功能<br>
+            📋 <strong>"案例库"</strong> — 浏览美学案例
           `);
-        }, 1000);
+        }, 600);
       }
     }
 
