@@ -2029,6 +2029,22 @@
       desc.textContent = `「${modeNames[currentMode]}」模式 · 基于上传照片的AI生成结果`;
       grid.innerHTML = '';
 
+      // Real generated sculpture images for backgrounds
+      const sculptureImages = [
+        'sculptures/01_eye.png',
+        'sculptures/02_nose.png',
+        'sculptures/03_jaw.png',
+        'sculptures/04_chest.png',
+        'sculptures/05_body.png',
+        'sculptures/06_youth.png',
+        'sculptures/07_skin.png',
+        'sculptures/08_lip.png',
+        'sculptures/09_hair.png',
+        'sculptures/10_neck.png',
+        'sculptures/11_bust.png',
+        'sculptures/12_full.png',
+      ];
+
       // Real analysis data per mode
       const analysisData = {
         1: [
