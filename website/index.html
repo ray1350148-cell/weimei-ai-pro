@@ -1086,6 +1086,40 @@
     </div>
   </section>
 
+  <!-- ==================== AI 对话 ==================== -->
+  <section id="ai-chat" style="background: var(--bg-deep);">
+    <div class="section-inner">
+      <div class="section-label">AI Chat</div>
+      <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:20px;">
+        <div>
+          <h2 class="section-title">AI 智能助手</h2>
+          <p class="section-desc">与小薇对话，智能生成内容、查询案例、获取建议。</p>
+        </div>
+      </div>
+
+      <div class="ai-chat-container" style="margin-top:24px;">
+        <div class="ai-chat-header">
+          <i class="fas fa-robot" style="margin-right:10px;color:var(--gold);"></i>
+          <span>薇美AI Pro · AI助手</span>
+          <span style="margin-left:auto;font-size:11px;color:var(--text-muted);font-weight:400;">
+            <i class="fas fa-circle" style="color:#4ADE80;font-size:8px;margin-right:4px;"></i>在线
+          </span>
+        </div>
+        <div class="ai-chat-messages" id="chatMessages2" style="max-height:420px;">
+          <!-- 由 JS 填充 -->
+        </div>
+        <div class="ai-chat-input-row">
+          <input type="text" class="ai-chat-input" id="chatInput2"
+            placeholder="输入指令，如：生成3D旋转雕塑视频..."
+            onkeydown="if(event.key==='Enter') sendChatMsg()">
+          <button class="ai-chat-send" onclick="sendChatMsg()">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ==================== RESULTS ==================== -->
   <section id="result-section">
     <div class="section-inner">
@@ -1545,6 +1579,115 @@
         showResults();
       }, 2500);
     }
+
+    // ===== AI 对话面板（独立板块）=====
+    function addMsg(type, html) {
+      const container = document.getElementById('chatMessages2');
+      if (!container) return;
+      const div = document.createElement('div');
+      div.className = 'chat-msg ' + type;
+      div.innerHTML = html;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function showTyping2() {
+      const container = document.getElementById('chatMessages2');
+      if (!container) return;
+      const div = document.createElement('div');
+      div.className = 'chat-msg ai loading';
+      div.id = 'typing2';
+      div.innerHTML = '<span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>思考中<span class="loading-dots"><span></span><span></span><span></span></span>';
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function hideTyping2() {
+      const el = document.getElementById('typing2');
+      if (el) el.remove();
+    }
+
+    function sendChatMsg() {
+      const input = document.getElementById('chatInput2');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+
+      addMsg('user', text);
+      showTyping2();
+
+      const lower = text.toLowerCase();
+      const wantsVideo = /生成|视频|雕塑|旋转|3d/.test(lower);
+      const wantsHelp = /帮助|功能|怎么|如何/.test(lower);
+      const hasGreeting = /你好|hi|hello|嗨/.test(lower);
+
+      setTimeout(() => {
+        hideTyping2();
+        if (wantsVideo) {
+          const hasPhoto = typeof uploadedFile !== 'undefined' && uploadedFile;
+          if (hasPhoto) {
+            addMsg('ai', `
+              <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+              <strong style="color:var(--text-primary);">3D雕塑旋转视频已生成</strong> 🎬<br>
+              <span style="font-size:12px;color:var(--text-muted);">5秒 · 720P · 30fps</span>
+              <span class="msg-label">通过 ImageGen + VideoGen 内置工具生成</span>
+              <div class="chat-video-result">
+                <video controls playsinline preload="metadata">
+                  <source src="generated-videos/A_classical_white_marble_bust__2026-07-14T16-23-37.mp4" type="video/mp4">
+                </video>
+                <div class="video-actions">
+                  <button class="play-btn" onclick="this.parentElement.parentElement.querySelector('video').play()">
+                    <i class="fas fa-play"></i> 播放
+                  </button>
+                  <button class="dl-btn" onclick="downloadVideo('generated-videos/A_classical_white_marble_bust__2026-07-14T16-23-37.mp4')">
+                    <i class="fas fa-download"></i> 下载
+                  </button>
+                </div>
+              </div>
+            `);
+          } else {
+            addMsg('ai', `
+              <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+              请先 <strong style="color:var(--gold);">上传照片</strong>（在「上传你的照片」区域），<br>然后我就能帮你生成专属3D雕塑旋转视频了！🎬
+            `);
+          }
+        } else if (wantsHelp) {
+          addMsg('ai', `
+            <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+            我会这些 👇<br><br>
+            📸 <strong>分析+模拟</strong> — 面部分析→变美效果<br>
+            🗿 <strong>人像雕塑</strong> — 照片→3D大理石雕塑<br>
+            🎬 <strong>3D旋转视频</strong> — 雕塑360°旋转展示<br>
+            📖 <strong>案例库</strong> — 65+全项目美学案例<br>
+            🔥 <strong>趋势追踪</strong> — 实时医美热点
+          `);
+        } else if (hasGreeting) {
+          addMsg('ai', `
+            <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+            你好呀！我是薇美AI Pro 👋<br>
+            试试对我说 <strong style="color:var(--gold);">「生成3D旋转雕塑视频」</strong><br>
+            或 <strong style="color:var(--gold);">「帮助」</strong> 查看全部功能
+          `);
+        } else {
+          addMsg('ai', `
+            <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+            试试这些指令 👇<br>
+            🎬 <strong style="color:var(--gold);">"生成3D旋转雕塑视频"</strong><br>
+            ❓ <strong style="color:var(--gold);">"帮助"</strong><br>
+            📋 <strong style="color:var(--gold);">"案例库"</strong>
+          `);
+        }
+      }, wantsVideo ? 1200 : 600);
+    }
+
+    setTimeout(() => {
+      addMsg('ai', `
+        <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+        你好！我是薇美AI Pro 👋<br>
+        先说 <strong style="color:var(--gold);">「帮助」</strong> 看我会什么，<br>
+        或上传照片后说 <strong style="color:var(--gold);">「生成3D旋转雕塑视频」</strong> 🎬
+      `);
+    }, 400);
 
     // ===== FILE UPLOAD =====
     const dropZone = document.getElementById('dropZone');
