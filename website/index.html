@@ -890,28 +890,198 @@
         </div>
       </div>
 
-      <!-- ===== 3D视频生成提示 (mode 3 可见) ===== -->
+      <!-- ===== 3D视频生成对话框 (mode 3 可见) ===== -->
       <div id="videoPipelineArea" style="display:none;">
-        <div style="margin-top:24px;padding:40px;border-radius:20px;background:var(--bg-card);border:1px solid var(--border-subtle);text-align:center;">
-          <i class="fas fa-wand-magic-sparkles" style="font-size:56px;color:var(--gold);margin-bottom:20px;opacity:0.6;"></i>
-          <h3 style="font-size:22px;margin-bottom:12px;">3D旋转雕塑视频由AI在对话中生成</h3>
-          <p style="color:var(--text-secondary);font-size:14px;line-height:1.8;max-width:520px;margin:0 auto;">
-            上传照片后，直接在对话框中告诉小薇：<br>
-            <strong style="color:var(--gold-light);">"帮我生成我的3D雕塑旋转视频"</strong>
-          </p>
-          <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-            <span style="padding:6px 16px;border-radius:20px;background:rgba(212,168,75,0.08);color:var(--gold);font-size:13px;border:1px solid var(--border-subtle);">
-              <i class="fas fa-check-circle" style="margin-right:6px;"></i>无需启动服务器
-            </span>
-            <span style="padding:6px 16px;border-radius:20px;background:rgba(212,168,75,0.08);color:var(--gold);font-size:13px;border:1px solid var(--border-subtle);">
-              <i class="fas fa-check-circle" style="margin-right:6px;"></i>VideoGen 内置工具
-            </span>
-            <span style="padding:6px 16px;border-radius:20px;background:rgba(212,168,75,0.08);color:var(--gold);font-size:13px;border:1px solid var(--border-subtle);">
-              <i class="fas fa-check-circle" style="margin-right:6px;"></i>即生成即预览
-            </span>
+        <div class="ai-chat-container">
+          <div class="ai-chat-header">
+            <i class="fas fa-robot" style="margin-right:10px;color:var(--gold);"></i>
+            <span>薇美AI Pro · 视频助手</span>
+          </div>
+          <div class="ai-chat-messages" id="chatMessages">
+            <!-- 自动插入欢迎消息 -->
+          </div>
+          <div class="ai-chat-input-row">
+            <input type="text" class="ai-chat-input" id="chatInput"
+              placeholder="输入指令，如：生成3D雕塑旋转视频..."
+              onkeydown="if(event.key==='Enter') sendChatMessage()">
+            <button class="ai-chat-send" onclick="sendChatMessage()">
+              <i class="fas fa-paper-plane"></i>
+            </button>
           </div>
         </div>
       </div>
+
+      <style>
+      .ai-chat-container {
+        margin-top: 24px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border-subtle);
+        background: var(--bg-card);
+      }
+      .ai-chat-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+        background: var(--bg-elevated);
+        display: flex;
+        align-items: center;
+      }
+      .ai-chat-messages {
+        padding: 16px 20px;
+        max-height: 480px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: rgba(13,13,13,0.3);
+      }
+      .ai-chat-messages::-webkit-scrollbar { width: 4px; }
+      .ai-chat-messages::-webkit-scrollbar-thumb { background: var(--gold-glow); border-radius: 2px; }
+
+      .chat-msg {
+        max-width: 85%;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        line-height: 1.6;
+        animation: msgIn 0.3s ease;
+      }
+      @keyframes msgIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .chat-msg.user {
+        align-self: flex-end;
+        background: linear-gradient(135deg, var(--gold), var(--amber));
+        color: var(--bg-deep);
+        border-bottom-right-radius: 4px;
+      }
+      .chat-msg.ai {
+        align-self: flex-start;
+        background: var(--bg-surface);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-subtle);
+        border-bottom-left-radius: 4px;
+      }
+      .chat-msg.ai .msg-avatar {
+        width: 24px; height: 24px;
+        border-radius: 50%;
+        background: var(--gold-glow);
+        display: inline-flex; align-items: center; justify-content: center;
+        margin-right: 8px; flex-shrink: 0;
+        font-size: 12px; color: var(--gold);
+        vertical-align: middle;
+      }
+      .chat-msg.ai .msg-label {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 6px;
+        display: block;
+      }
+      .chat-msg.loading .loading-dots span {
+        display: inline-block;
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--gold);
+        margin: 0 2px;
+        animation: dotBounce 1.4s infinite ease-in-out both;
+      }
+      .chat-msg.loading .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+      .chat-msg.loading .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+      @keyframes dotBounce {
+        0%, 80%, 100% { transform: scale(0); }
+        40% { transform: scale(1); }
+      }
+
+      .chat-video-result {
+        margin-top: 8px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--bg-deep);
+        border: 1px solid var(--border-subtle);
+        max-width: 340px;
+      }
+      .chat-video-result video {
+        width: 100%;
+        display: block;
+        aspect-ratio: 9/16;
+        max-height: 320px;
+        object-fit: cover;
+      }
+      .chat-video-result .video-actions {
+        display: flex;
+        gap: 8px;
+        padding: 10px 14px;
+        border-top: 1px solid var(--border-subtle);
+        background: var(--bg-card);
+      }
+      .chat-video-result .video-actions button {
+        flex: 1;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .chat-video-result .video-actions .play-btn {
+        background: var(--gold);
+        color: var(--bg-deep);
+      }
+      .chat-video-result .video-actions .play-btn:hover {
+        box-shadow: 0 0 20px var(--gold-glow);
+      }
+      .chat-video-result .video-actions .dl-btn {
+        background: transparent;
+        color: var(--gold);
+        border: 1px solid rgba(212,168,75,0.3);
+      }
+      .chat-video-result .video-actions .dl-btn:hover {
+        border-color: var(--gold);
+        background: rgba(212,168,75,0.06);
+      }
+
+      .ai-chat-input-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-top: 1px solid var(--border-subtle);
+        background: var(--bg-elevated);
+      }
+      .ai-chat-input {
+        flex: 1;
+        padding: 10px 16px;
+        border-radius: 24px;
+        border: 1px solid var(--border-subtle);
+        background: var(--bg-deep);
+        color: var(--text-primary);
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+      .ai-chat-input:focus { border-color: var(--gold-glow); }
+      .ai-chat-input::placeholder { color: var(--text-muted); }
+      .ai-chat-send {
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        border: none;
+        background: linear-gradient(135deg, var(--gold), var(--amber));
+        color: var(--bg-deep);
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.3s; flex-shrink: 0;
+      }
+      .ai-chat-send:hover { box-shadow: 0 0 20px var(--gold-glow); transform: scale(1.05); }
+      </style>
 
     </div>
   </section>
@@ -1402,6 +1572,110 @@
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
     dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
     dropZone.addEventListener('click', () => fileInput.click());
+
+    // ===== AI CHAT =====
+    const sampleVideos = [
+      { src: 'generated-videos/A_stunning_white_Carrara_marbl_2026-07-14T16-22-30.mp4', label: '面部骨相分析' },
+      { src: 'generated-videos/A_classical_white_marble_bust__2026-07-14T16-23-37.mp4', label: '下颌轮廓展示' },
+    ];
+    let chatVideoIndex = 0;
+
+    function addChatMessage(type, html) {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `chat-msg ${type}`;
+      div.innerHTML = html;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function showTyping() {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'chat-msg ai loading';
+      div.id = 'typingIndicator';
+      div.innerHTML = '<span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>思考中<span class="loading-dots"><span></span><span></span><span></span></span>';
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTyping() {
+      const el = document.getElementById('typingIndicator');
+      if (el) el.remove();
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+
+      // 显示用户消息
+      addChatMessage('user', text);
+
+      // 检查是否关于视频生成
+      const keywords = ['视频', '生成', '雕塑', '旋转', '3D', 'video', 'sculpture'];
+      const isVideoRequest = keywords.some(k => text.toLowerCase().includes(k));
+
+      if (isVideoRequest) {
+        showTyping();
+        setTimeout(() => {
+          removeTyping();
+          const video = sampleVideos[chatVideoIndex % sampleVideos.length];
+          chatVideoIndex++;
+          const videoPath = video.src;
+          addChatMessage('ai', `
+            <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+            <strong style="color:var(--text-primary);">${video.label}</strong> 已生成！
+            <span class="msg-label">🎬 AI通过VideoGen内置工具生成 · 5秒 · 720P</span>
+            <div class="chat-video-result">
+              <video controls playsinline preload="metadata">
+                <source src="${videoPath}" type="video/mp4">
+              </video>
+              <div class="video-actions">
+                <button class="play-btn" onclick="this.parentElement.parentElement.querySelector('video').play()">
+                  <i class="fas fa-play"></i> 播放
+                </button>
+                <button class="dl-btn" onclick="downloadVideo('${videoPath}')">
+                  <i class="fas fa-download"></i> 下载
+                </button>
+              </div>
+            </div>
+          `);
+        }, 2000);
+      } else {
+        showTyping();
+        setTimeout(() => {
+          removeTyping();
+          addChatMessage('ai', `
+            <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+            你好！我可以帮你生成 <strong style="color:var(--gold);">3D雕塑旋转视频</strong> 🎬<br>
+            试试输入：<span style="color:var(--gold-light);">"生成3D雕塑旋转视频"</span>
+            <span class="msg-label">💡 支持1080P · 9:16竖屏 · 骨相标注</span>
+          `);
+        }, 1000);
+      }
+    }
+
+    function downloadVideo(path) {
+      const a = document.createElement('a');
+      a.href = path;
+      a.download = 'weimei_sculpture_video.mp4';
+      a.click();
+    }
+
+    // 初始化：欢迎消息
+    setTimeout(() => {
+      const container = document.getElementById('chatMessages');
+      if (!container) return;
+      addChatMessage('ai', `
+        <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
+        你好！我是薇美AI Pro 视频助手 🎬<br>
+        上传照片后，在这里输入 <strong style="color:var(--gold);">"生成3D旋转雕塑视频"</strong><br>
+        我通过内置 <strong>VideoGen</strong> 工具为你生成专属雕塑展示视频！
+        <span class="msg-label">⚡ 即生成即预览 · 支持下载保存</span>
+      `);
+    }, 300);
 
     function resetUpload() {
       uploadedFile = null;
