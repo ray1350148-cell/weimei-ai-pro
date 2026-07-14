@@ -890,52 +890,25 @@
         </div>
       </div>
 
-      <!-- ===== 3D视频生成管线 (mode 3 可见) ===== -->
+      <!-- ===== 3D视频生成提示 (mode 3 可见) ===== -->
       <div id="videoPipelineArea" style="display:none;">
-        <div class="pipeline-steps">
-          <div class="pipeline-step" id="step1">
-            <div class="step-num">1</div>
-            <div class="step-info">
-              <h4>真人照片 → 3D大理石雕塑</h4>
-              <p>AI将你的照片转化为经典白色卡拉拉大理石雕塑</p>
-            </div>
-            <div class="step-status" id="step1Status">等待中</div>
-          </div>
-          <div class="pipeline-step" id="step2">
-            <div class="step-num">2</div>
-            <div class="step-info">
-              <h4>雕塑图 → 旋转展示视频</h4>
-              <p>生成10秒360°旋转展示视频，骨相标注+金色高亮</p>
-            </div>
-            <div class="step-status" id="step2Status">等待中</div>
-          </div>
-          <div class="pipeline-step" id="step3">
-            <div class="step-num">3</div>
-            <div class="step-info">
-              <h4>导出 & 预览</h4>
-              <p>视频已生成，可预览、下载和分享</p>
-            </div>
-            <div class="step-status" id="step3Status">等待中</div>
-          </div>
-          <div class="progress-bar">
-            <div class="fill" id="progressFill"></div>
-          </div>
-        </div>
-
-        <div class="video-preview-container" id="videoPreviewContainer">
-          <video id="videoPlayer" controls playsinline>
-            <source id="videoSource" src="" type="video/mp4">
-          </video>
-          <div class="video-actions">
-            <button class="btn-primary" id="downloadVideoBtn">
-              <i class="fas fa-download"></i> 导出视频
-            </button>
-            <button class="btn-outline" onclick="document.getElementById('videoPlayer').play()">
-              <i class="fas fa-play"></i> 重新播放
-            </button>
-            <button class="btn-outline" style="margin-left:auto;" onclick="resetVideoPipeline()">
-              <i class="fas fa-rotate"></i> 重新生成
-            </button>
+        <div style="margin-top:24px;padding:40px;border-radius:20px;background:var(--bg-card);border:1px solid var(--border-subtle);text-align:center;">
+          <i class="fas fa-wand-magic-sparkles" style="font-size:56px;color:var(--gold);margin-bottom:20px;opacity:0.6;"></i>
+          <h3 style="font-size:22px;margin-bottom:12px;">3D旋转雕塑视频由AI在对话中生成</h3>
+          <p style="color:var(--text-secondary);font-size:14px;line-height:1.8;max-width:520px;margin:0 auto;">
+            上传照片后，直接在对话框中告诉小薇：<br>
+            <strong style="color:var(--gold-light);">"帮我生成我的3D雕塑旋转视频"</strong>
+          </p>
+          <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <span style="padding:6px 16px;border-radius:20px;background:rgba(212,168,75,0.08);color:var(--gold);font-size:13px;border:1px solid var(--border-subtle);">
+              <i class="fas fa-check-circle" style="margin-right:6px;"></i>无需启动服务器
+            </span>
+            <span style="padding:6px 16px;border-radius:20px;background:rgba(212,168,75,0.08);color:var(--gold);font-size:13px;border:1px solid var(--border-subtle);">
+              <i class="fas fa-check-circle" style="margin-right:6px;"></i>VideoGen 内置工具
+            </span>
+            <span style="padding:6px 16px;border-radius:20px;background:rgba(212,168,75,0.08);color:var(--gold);font-size:13px;border:1px solid var(--border-subtle);">
+              <i class="fas fa-check-circle" style="margin-right:6px;"></i>即生成即预览
+            </span>
           </div>
         </div>
       </div>
@@ -1355,46 +1328,10 @@
       el.addEventListener('click', () => switchMode(parseInt(el.dataset.mode)));
     });
 
-    // ===== VIDEO PIPELINE =====
-    const API_BASES = ['http://127.0.0.1:5000/api', 'http://localhost:5000/api'];
-    let API_BASE = API_BASES[0];
-    let currentTaskId = null;
-    let serverChecked = false;
-
+    // ===== VIDEO PIPELINE (简化版 - 无需后端) =====
     function toggleVideoPipeline(show) {
       const area = document.getElementById('videoPipelineArea');
       if (area) area.style.display = show ? 'block' : 'none';
-    }
-
-    function updateStep(stepId, state, text) {
-      const el = document.getElementById(stepId);
-      const statusEl = document.getElementById(stepId + 'Status');
-      if (!el) return;
-      el.className = 'pipeline-step';
-      if (state === 'active') el.classList.add('active');
-      if (state === 'completed') el.classList.add('completed');
-      if (text && statusEl) statusEl.textContent = text;
-    }
-
-    function updateProgress(pct) {
-      const fill = document.getElementById('progressFill');
-      if (fill) fill.style.width = pct + '%';
-    }
-
-    async function checkServer() {
-      for (const base of API_BASES) {
-        try {
-          const resp = await fetch(base + '/status', { signal: AbortSignal.timeout(3000) });
-          const data = await resp.json();
-          if (data.ok) {
-            API_BASE = base;
-            serverChecked = true;
-            return true;
-          }
-        } catch(e) {}
-      }
-      serverChecked = false;
-      return false;
     }
 
     // Override startGeneration for mode 3
@@ -1406,51 +1343,12 @@
       }
 
       if (currentMode === 3) {
-        // 3D旋转视频模式 — 调用后端API管线
+        // 3D旋转视频模式 — 引导用户在对话中生成
         toggleVideoPipeline(true);
-        document.getElementById('videoPreviewContainer').classList.remove('visible');
-        updateStep('step1', 'active', '检查服务器连接...');
-        updateStep('step2', '', '等待中');
-        updateStep('step3', '', '等待中');
-        updateProgress(5);
-
-        // 检查后端服务是否运行
-        const serverOk = await checkServer();
-        if (!serverOk) {
-          updateStep('step1', '', `❌ 无法连接后端服务`);
-          updateStep('step2', '', '');
-          updateStep('step3', '', '');
-          updateProgress(0);
-          showServerAlert();
-          return;
-        }
-
-        try {
-          const formData = new FormData();
-          formData.append('photo', uploadedFile);
-
-          updateStep('step1', 'active', '上传照片...');
-          updateProgress(15);
-
-          const uploadResp = await fetch(API_BASE + '/upload', { method: 'POST', body: formData });
-          const uploadData = await uploadResp.json();
-
-          if (!uploadData.ok) {
-            updateStep('step1', '', '❌ ' + (uploadData.error || '上传失败'));
-            return;
-          }
-
-          currentTaskId = uploadData.task_id;
-          updateStep('step1', 'completed', '✅ 已上传');
-          updateStep('step2', 'active', 'AI生成中...');
-          updateProgress(30);
-
-          await pollTask(currentTaskId);
-
-        } catch (e) {
-          updateStep('step1', '', '❌ 请求失败: ' + e.message);
-          updateProgress(0);
-        }
+        const box = document.querySelector('#upload-area .upload-box h4');
+        const desc = document.querySelector('#upload-area .upload-box p');
+        box.textContent = '✅ 照片已上传！';
+        desc.innerHTML = '<strong>在对话框中输入：</strong>"帮我生成3D雕塑旋转视频"';
         return;
       }
 
@@ -1476,115 +1374,6 @@
         overlay.classList.remove('active');
         showResults();
       }, 2500);
-    }
-
-    async function pollTask(taskId) {
-      let attempts = 0;
-      while (attempts < 120) {
-        attempts++;
-        await new Promise(r => setTimeout(r, 3000));
-        try {
-          const resp = await fetch(API_BASE + '/task/' + taskId, { signal: AbortSignal.timeout(8000) });
-          const data = await resp.json();
-          if (!data.ok) { updateStep('step2', '', '❌ 查询失败'); return; }
-          updateProgress(data.progress || 0);
-          if (data.status === 'running') {
-            if (data.progress < 50) updateStep('step2', 'active', '雕塑生成中...');
-            else { updateStep('step2', 'completed', '✅ 雕塑完成'); updateStep('step3', 'active', '视频生成中...'); }
-          }
-          if (data.status === 'completed') {
-            updateStep('step2', 'completed', '✅ 雕塑完成');
-            updateStep('step3', 'completed', '✅ 视频已生成');
-            updateProgress(100);
-            if (data.video_url) showVideoResult(API_BASE.replace('/api', '') + data.video_url);
-            return;
-          }
-          if (data.status === 'failed') {
-            updateStep('step2', '', '❌ ' + (data.error || '生成失败'));
-            return;
-          }
-        } catch (e) {
-          updateStep('step2', '', '⚠️ 服务器连接中断: ' + e.message);
-        }
-      }
-      updateStep('step2', '', '⏰ 超时');
-    }
-
-    function showServerAlert() {
-      // 移除旧弹窗
-      const old = document.getElementById('serverAlert');
-      if (old) old.remove();
-
-      const alert = document.createElement('div');
-      alert.id = 'serverAlert';
-      alert.style.cssText = `
-        position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
-        z-index: 5000; max-width: 600px; width: 90%;
-        background: var(--bg-card); border: 1px solid var(--gold-glow);
-        border-radius: 16px; padding: 28px 32px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        animation: modalRise 0.3s ease;
-      `;
-      alert.innerHTML = `
-        <div style="display:flex;align-items:flex-start;gap:16px;">
-          <div style="width:44px;height:44px;border-radius:12px;background:rgba(212,168,75,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="fas fa-server" style="color:var(--gold);font-size:20px;"></i>
-          </div>
-          <div style="flex:1;">
-            <h4 style="font-size:16px;margin-bottom:6px;">后端服务未运行</h4>
-            <p style="font-size:13px;color:var(--text-muted);line-height:1.7;">
-              3D视频生成需要启动后端 API 服务。请按以下步骤操作：
-            </p>
-            <div style="margin:12px 0;padding:14px 16px;background:var(--bg-deep);border-radius:10px;font-size:13px;line-height:1.8;font-family:'JetBrains Mono',monospace;">
-              <div style="color:var(--gold);"># 1. 先设置 API Key</div>
-              <div style="color:var(--text-secondary);">export DOUBAO_API_KEY="你的Key"</div>
-              <div style="color:var(--gold);margin-top:6px;"># 2. 启动后端服务</div>
-              <div style="color:var(--text-secondary);">python video_server.py</div>
-            </div>
-            <p style="font-size:12px;color:var(--text-muted);">
-              服务启动后在浏览器刷新页面即可使用。
-            </p>
-            <button onclick="this.closest('#serverAlert').remove()" style="
-              margin-top:12px;padding:8px 20px;border-radius:20px;
-              background:var(--gold);color:var(--bg-deep);border:none;
-              font-size:13px;font-weight:600;cursor:pointer;
-            ">我知道了</button>
-          </div>
-          <button onclick="this.closest('#serverAlert').remove()" style="
-            width:28px;height:28px;border-radius:50%;border:1px solid var(--border-subtle);
-            background:transparent;color:var(--text-muted);cursor:pointer;
-            display:flex;align-items:center;justify-content:center;flex-shrink:0;
-          "><i class="fas fa-xmark" style="font-size:12px;"></i></button>
-        </div>
-      `;
-      document.body.appendChild(alert);
-      setTimeout(() => { const el = document.getElementById('serverAlert'); if (el) el.remove(); }, 20000);
-    }
-
-    function showVideoResult(videoUrl) {
-      const container = document.getElementById('videoPreviewContainer');
-      const source = document.getElementById('videoSource');
-      const player = document.getElementById('videoPlayer');
-      if (!container) return;
-      source.src = videoUrl;
-      player.load();
-      container.classList.add('visible');
-      container.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      document.getElementById('downloadVideoBtn').onclick = () => {
-        const a = document.createElement('a');
-        a.href = videoUrl; a.download = 'weimei_3d_sculpture_rotation.mp4'; a.click();
-      };
-    }
-
-    function resetVideoPipeline() {
-      toggleVideoPipeline(false);
-      const container = document.getElementById('videoPreviewContainer');
-      if (container) container.classList.remove('visible');
-      currentTaskId = null;
-      updateStep('step1', '', '等待中');
-      updateStep('step2', '', '等待中');
-      updateStep('step3', '', '等待中');
-      updateProgress(0);
     }
 
     // ===== FILE UPLOAD =====
