@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>薇美AI Pro — 医美美学内容全能助手</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-deep: #0D0D0D;
+      --bg-surface: #1A1A1A;
+      --bg-card: #222222;
+      --bg-elevated: #2A2A2A;
+      --gold: #D4A84B;
+      --gold-light: #F0D78E;
+      --gold-glow: rgba(212, 168, 75, 0.25);
+      --amber: #C9953A;
+      --cream: #F5F0E8;
+      --text-primary: #F0EDE8;
+      --text-secondary: #A09888;
+      --text-muted: #6B6558;
+      --accent-rose: #C97B6E;
+      --accent-teal: #6BA29A;
+      --accent-slate: #7A8A9E;
+      --border-subtle: rgba(240, 237, 232, 0.06);
+      --border-hover: rgba(212, 168, 75, 0.2);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    h1, h2, h3, h4, .serif {
+      font-family: 'Playfair Display', serif;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-glow); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+    ::selection { background: var(--gold-glow); color: var(--cream); }
+
+    /* ===== NAVIGATION ===== */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      backdrop-filter: blur(24px);
+      background: rgba(13, 13, 13, 0.8);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: all 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(13, 13, 13, 0.92);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.4);
+    }
+    .nav-inner {
+      max-width: 1360px; margin: 0 auto;
+      padding: 16px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--text-primary);
+    }
+    .nav-brand .brand-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--gold), var(--amber));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--bg-deep); font-size: 18px;
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+    .nav-brand span { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a {
+      text-decoration: none; color: var(--text-secondary);
+      font-size: 14px; font-weight: 500;
+      letter-spacing: 0.3px; transition: all 0.3s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--gold); transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold-light); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      padding: 120px 40px 80px;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -20%; right: -5%;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(212,168,75,0.06) 0%, transparent 60%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -15%; left: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(107,162,154,0.04) 0%, transparent 50%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-grid {
+      max-width: 1360px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .hero-content h1 {
+      font-size: clamp(42px, 5vw, 72px);
+      font-weight: 700; line-height: 1.12;
+      letter-spacing: -1px;
+    }
+    .hero-content h1 em { font-style: italic; color: var(--gold); }
+    .hero-sub {
+      font-size: 18px; color: var(--text-secondary);
+      margin: 24px 0 36px; max-width: 500px; line-height: 1.8;
+    }
+    .hero-badges { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 36px; }
+    .hero-badge {
+      padding: 6px 16px; border-radius: 20px;
+      font-size: 13px; font-weight: 500;
+      background: rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+    .hero-badge.highlight {
+      background: var(--gold-glow); color: var(--gold-light);
+      border-color: var(--gold-glow);
+    }
+
+    .hero-visual { position: relative; display: flex; justify-content: center; align-items: center; }
+    .hero-ring {
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      border: 1px solid rgba(212,168,75,0.12);
+      position: relative; display: flex; align-items: center; justify-content: center;
+      animation: float 6s ease-in-out infinite;
+      box-shadow: 0 0 80px rgba(212,168,75,0.04);
+    }
+    .hero-ring-inner {
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      border: 1px solid rgba(212,168,75,0.15);
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle, rgba(212,168,75,0.06), transparent 70%);
+    }
+    .hero-ring-icon { font-size: 64px; color: var(--gold); opacity: 0.5; }
+    .hero-ring-dot {
+      position: absolute; width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 24px var(--gold-glow);
+    }
+    .hero-ring-dot:nth-child(1) { top: 20px; left: 50%; transform: translateX(-50%); }
+    .hero-ring-dot:nth-child(2) { bottom: 40px; right: 30px; }
+    .hero-ring-dot:nth-child(3) { top: 40%; left: 20px; }
+    .hero-ring-dot:nth-child(4) { bottom: 30%; right: 15px; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-18px); }
+    }
+
+    /* ===== Section Common ===== */
+    section { padding: 100px 40px; position: relative; }
+    .section-inner { max-width: 1360px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(32px, 3.5vw, 48px); font-weight: 700; margin-bottom: 16px;
+    }
+    .section-desc { color: var(--text-secondary); font-size: 16px; max-width: 600px; line-height: 1.8; }
+
+    /* Section dividers */
+    section::before {
+      content: '';
+      position: absolute; top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+    }
+
+    /* ===== FEATURES ===== */
+    #features { background: var(--bg-surface); }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 20px; margin-top: 48px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border-radius: 16px; padding: 36px 30px;
+      position: relative; overflow: hidden;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      text-decoration: none; color: inherit; display: block;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-glow), transparent);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .feature-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--border-hover);
+      box-shadow: 0 24px 48px -12px rgba(0,0,0,0.5), 0 0 40px rgba(212,168,75,0.04);
+      background: #252525;
+    }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-card .icon-wrap {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 20px;
+    }
+    .feature-card:nth-child(1) .icon-wrap { background: linear-gradient(135deg, #D4A84B, #C9953A); color: #0D0D0D; }
+    .feature-card:nth-child(2) .icon-wrap { background: linear-gradient(135deg, #6BA29A, #4D8A82); color: #0D0D0D; }
+    .feature-card:nth-child(3) .icon-wrap { background: linear-gradient(135deg, #C97B6E, #B06154); color: #0D0D0D; }
+    .feature-card:nth-child(4) .icon-wrap { background: linear-gradient(135deg, #7A8A9E, #5C6C80); color: #0D0D0D; }
+    .feature-card:nth-child(5) .icon-wrap { background: linear-gradient(135deg, #D4A84B, #8B7355); color: #0D0D0D; }
+    .feature-card:nth-child(6) .icon-wrap { background: linear-gradient(135deg, #6BA29A, #C97B6E); color: #0D0D0D; }
+    .feature-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+    .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+    .feature-card .tag {
+      display: inline-block; padding: 3px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 600;
+      background: rgba(212,168,75,0.1); color: var(--gold);
+      margin-top: 14px;
+    }
+
+    /* ===== UPLOAD ===== */
+    #upload-area { background: var(--bg-deep); }
+    .upload-container {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 48px; margin-top: 40px; align-items: start;
+    }
+    .upload-box {
+      border: 2px dashed rgba(212,168,75,0.15);
+      border-radius: 20px; padding: 60px 40px;
+      text-align: center; transition: all 0.3s; cursor: pointer;
+      background: rgba(255,255,255,0.02);
+    }
+    .upload-box:hover, .upload-box.dragover {
+      border-color: var(--gold-glow);
+      background: rgba(212,168,75,0.03);
+    }
+    .upload-box i { font-size: 48px; color: var(--gold); margin-bottom: 16px; opacity: 0.6; }
+    .upload-box h4 { font-size: 18px; margin-bottom: 8px; }
+    .upload-box p { font-size: 14px; color: var(--text-muted); }
+    .upload-box .upload-btn {
+      display: inline-block; margin-top: 20px;
+      padding: 12px 32px;
+      background: linear-gradient(135deg, var(--gold), var(--amber));
+      color: var(--bg-deep); border: none; border-radius: 30px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.3s;
+    }
+    .upload-box .upload-btn:hover { transform: scale(1.02); box-shadow: 0 0 30px var(--gold-glow); }
+
+    .upload-preview {
+      border-radius: 20px; overflow: hidden;
+      background: var(--bg-surface);
+      min-height: 280px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      border: 1px solid var(--border-subtle);
+    }
+    .upload-preview img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .upload-preview .placeholder { text-align: center; color: var(--text-muted); }
+    .upload-preview .placeholder i { font-size: 40px; margin-bottom: 12px; color: rgba(212,168,75,0.2); }
+
+    .upload-actions { margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .upload-actions button {
+      padding: 12px 28px; border-radius: 30px;
+      font-size: 14px; font-weight: 600; border: none;
+      cursor: pointer; transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--amber));
+      color: var(--bg-deep);
+    }
+    .btn-primary:hover { box-shadow: 0 0 30px var(--gold-glow); transform: scale(1.02); }
+    .btn-outline {
+      background: transparent; color: var(--gold);
+      border: 1.5px solid rgba(212,168,75,0.3);
+    }
+    .btn-outline:hover { border-color: var(--gold); background: rgba(212,168,75,0.06); }
+    .btn-gold { background: var(--amber); color: var(--bg-deep); }
+
+    /* ===== Mode Pills ===== */
+    .mode-pills {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin: 28px 0;
+    }
+    .mode-pill {
+      padding: 10px 22px; border-radius: 30px;
+      font-size: 14px; font-weight: 500;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255,255,255,0.03);
+      color: var(--text-secondary); cursor: pointer;
+      transition: all 0.3s;
+    }
+    .mode-pill:hover { border-color: var(--gold-glow); color: var(--gold-light); }
+    .mode-pill.active {
+      background: linear-gradient(135deg, var(--gold), var(--amber));
+      color: var(--bg-deep); border-color: transparent;
+    }
+
+    /* ===== RESULTS ===== */
+    #result-section { background: var(--bg-surface); display: none; }
+    #result-section.visible { display: block; }
+    .result-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px; margin-top: 36px;
+    }
+    .result-card {
+      background: var(--bg-card);
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      transition: all 0.4s;
+    }
+    .result-card:hover {
+      box-shadow: 0 12px 32px -8px rgba(0,0,0,0.4);
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+    }
+    .result-card .result-img {
+      width: 100%; aspect-ratio: 3/4;
+      background: var(--bg-deep);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 14px;
+      position: relative; overflow: hidden;
+    }
+    .result-card .result-img::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
+      background: linear-gradient(to top, var(--bg-card), transparent);
+    }
+    .result-card .result-img i { position: relative; z-index: 1; }
+    .result-card .result-body { padding: 20px 24px; }
+    .result-card .result-body h4 { font-size: 16px; margin-bottom: 6px; }
+    .result-card .result-body p { font-size: 13px; color: var(--text-muted); }
+
+    /* ===== CASE LIBRARY ===== */
+    #cases { background: var(--bg-deep); }
+    .case-categories {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin: 28px 0;
+      position: sticky; top: 70px; z-index: 10;
+      padding: 8px 0;
+    }
+    .case-cat-pill {
+      padding: 8px 18px; border-radius: 20px;
+      font-size: 13px; font-weight: 500;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255,255,255,0.02);
+      color: var(--text-muted); cursor: pointer;
+      transition: all 0.3s;
+    }
+    .case-cat-pill:hover, .case-cat-pill.active {
+      border-color: var(--gold-glow); color: var(--gold-light);
+      background: rgba(212,168,75,0.06);
+    }
+    .case-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px; margin-top: 24px;
+    }
+    .case-item {
+      background: var(--bg-card);
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      transition: all 0.4s; cursor: pointer;
+    }
+    .case-item:hover {
+      transform: translateY(-6px);
+      border-color: var(--border-hover);
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.5);
+    }
+    .case-item .case-img {
+      width: 100%; aspect-ratio: 16/10;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background-color: var(--bg-deep);
+    }
+    .case-item .case-img .case-bg {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background-size: cover; background-position: center;
+      filter: brightness(0.85) contrast(1.05);
+      transition: transform 0.6s ease;
+    }
+    .case-item:hover .case-bg {
+      transform: scale(1.05);
+    }
+    .case-item .case-img .cinema-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding: 20px; text-align: center;
+    }
+    .case-item .case-img .cinema-overlay .sculpture-icon {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      background: linear-gradient(135deg, rgba(212,168,75,0.9), rgba(240,215,142,0.9));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .case-item:hover .case-img .cinema-overlay .sculpture-icon {
+      opacity: 0;
+    }
+    .case-item .case-img .cinema-overlay .sculpture-label {
+      font-size: 11px; color: var(--cream); letter-spacing: 2px;
+      font-weight: 500;
+      background: rgba(0,0,0,0.7); padding: 5px 14px; border-radius: 12px;
+      backdrop-filter: blur(8px);
+      -webkit-text-fill-color: var(--cream);
+      border: 1px solid rgba(212,168,75,0.4);
+      text-transform: uppercase;
+    }
+    .case-item .case-body { padding: 18px 22px 22px; }
+    .case-item .case-body .case-cat-tag {
+      display: inline-block; padding: 2px 10px; border-radius: 8px;
+      font-size: 11px; font-weight: 500;
+      background: rgba(212,168,75,0.08); color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .case-item .case-body h4 { font-size: 16px; margin-bottom: 4px; }
+    .case-item .case-body p { font-size: 13px; color: var(--text-muted); }
+
+    /* ===== VIDEO PIPELINE ===== */
+    .pipeline-steps { margin-top: 24px; }
+    .pipeline-step {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 16px 20px; margin-bottom: 12px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.4s;
+    }
+    .pipeline-step.active { border-color: var(--gold-glow); background: rgba(212,168,75,0.04); }
+    .pipeline-step.completed { border-color: rgba(212,168,75,0.3); opacity: 0.8; }
+    .pipeline-step .step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+      background: rgba(255,255,255,0.05); color: var(--text-muted);
+      transition: all 0.3s;
+    }
+    .pipeline-step.active .step-num { background: var(--gold); color: var(--bg-deep); }
+    .pipeline-step.completed .step-num { background: var(--accent-teal); color: var(--bg-deep); }
+    .pipeline-step .step-info { flex: 1; }
+    .pipeline-step .step-info h4 { font-size: 14px; margin-bottom: 4px; }
+    .pipeline-step .step-info p { font-size: 12px; color: var(--text-muted); }
+    .pipeline-step .step-status { font-size: 13px; }
+    .pipeline-step.completed .step-status { color: var(--accent-teal); }
+    .pipeline-step.active .step-status { color: var(--gold); }
+
+    .video-preview-container {
+      margin-top: 24px;
+      border-radius: 16px; overflow: hidden;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      display: none;
+    }
+    .video-preview-container.visible { display: block; }
+    .video-preview-container video {
+      width: 100%; display: block;
+      aspect-ratio: 9/16; max-height: 560px;
+      object-fit: cover;
+    }
+    .video-preview-container .video-actions {
+      display: flex; gap: 12px; padding: 16px 20px;
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+    }
+    .video-preview-container .video-actions button {
+      padding: 10px 24px; border-radius: 24px;
+      font-size: 13px; font-weight: 600; border: none;
+      cursor: pointer; transition: all 0.3s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .progress-bar {
+      height: 4px; border-radius: 2px;
+      background: var(--border-subtle);
+      margin-top: 16px; overflow: hidden;
+    }
+    .progress-bar .fill {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    /* ===== TRENDS (Article Cards) ===== */
+    #trends { background: var(--bg-surface); }
+    .trend-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 24px; margin-top: 36px;
+    }
+    .trend-card {
+      background: var(--bg-card);
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      transition: all 0.4s; cursor: pointer;
+    }
+    .trend-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--border-hover);
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.5);
+    }
+    .trend-card .trend-banner {
+      width: 100%; aspect-ratio: 16/9;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .trend-card .trend-banner .banner-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.2));
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .trend-card .trend-banner .banner-overlay .trend-icon {
+      font-size: 40px; margin-bottom: 8px;
+      filter: drop-shadow(0 0 16px rgba(212,168,75,0.2));
+    }
+    .trend-card .trend-banner .cat-badge {
+      position: absolute; top: 14px; left: 14px;
+      padding: 4px 12px; border-radius: 8px;
+      font-size: 11px; font-weight: 600;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      color: var(--gold); border: 1px solid rgba(212,168,75,0.15);
+    }
+    .trend-card .trend-body { padding: 20px 24px 24px; }
+    .trend-card .trend-body h4 { font-size: 17px; margin-bottom: 8px; line-height: 1.4; }
+    .trend-card .trend-body p { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+    .trend-card .trend-body .trend-meta {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 14px; padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 12px; color: var(--text-muted);
+    }
+    .trend-card .trend-body .trend-meta .read-more {
+      margin-left: auto; color: var(--gold);
+      font-weight: 500; transition: all 0.3s;
+    }
+    .trend-card:hover .trend-body .trend-meta .read-more {
+      gap: 6px; display: inline-flex; align-items: center;
+    }
+
+    /* ===== Article Modal ===== */
+    .article-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(12px);
+      z-index: 3000; display: none;
+      align-items: center; justify-content: center;
+      padding: 40px;
+    }
+    .article-overlay.active { display: flex; }
+    .article-modal {
+      background: var(--bg-card);
+      border-radius: 20px; max-width: 720px; width: 100%;
+      max-height: 85vh; overflow-y: auto;
+      border: 1px solid var(--border-subtle);
+      animation: modalRise 0.35s ease;
+    }
+    @keyframes modalRise {
+      from { transform: translateY(40px) scale(0.96); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .article-modal .article-header {
+      padding: 32px 36px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      position: relative;
+    }
+    .article-modal .article-header .close-btn {
+      position: absolute; top: 20px; right: 24px;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255,255,255,0.03);
+      color: var(--text-secondary); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s; font-size: 16px;
+    }
+    .article-modal .article-header .close-btn:hover {
+      border-color: var(--gold-glow); color: var(--gold);
+    }
+    .article-modal .article-header .article-cat {
+      font-size: 11px; letter-spacing: 3px;
+      color: var(--gold); font-weight: 600; margin-bottom: 8px;
+    }
+    .article-modal .article-header h2 { font-size: 24px; line-height: 1.3; }
+    .article-modal .article-body { padding: 28px 36px 36px; }
+    .article-modal .article-body p {
+      font-size: 15px; color: var(--text-secondary);
+      line-height: 1.9; margin-bottom: 16px;
+    }
+    .article-modal .article-body .article-img-placeholder {
+      width: 100%; aspect-ratio: 16/9;
+      border-radius: 12px;
+      background: var(--bg-deep);
+      display: flex; align-items: center; justify-content: center;
+      margin: 20px 0;
+      border: 1px solid var(--border-subtle);
+    }
+    .article-modal .article-body .article-img-placeholder i {
+      font-size: 36px; color: var(--text-muted); opacity: 0.4;
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(12px);
+      z-index: 2000; display: none;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border-radius: 24px; padding: 40px;
+      max-width: 480px; width: 90%;
+      text-align: center;
+      border: 1px solid var(--border-subtle);
+      animation: modalRise 0.3s ease;
+    }
+    .modal .modal-loader {
+      width: 56px; height: 56px;
+      margin: 16px auto 24px;
+      border: 3px solid rgba(212,168,75,0.1);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .modal h3 { font-size: 20px; margin-bottom: 10px; }
+    .modal p { color: var(--text-muted); font-size: 14px; line-height: 1.7; }
+
+    /* ===== Disclaimer ===== */
+    .disclaimer-bar {
+      background: rgba(212,168,75,0.03);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 18px 40px; text-align: center;
+      font-size: 12px; color: var(--text-muted); line-height: 1.8;
+    }
+    .disclaimer-bar strong { color: var(--gold); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: #0A0A0A;
+      padding: 60px 40px 30px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    footer .footer-inner {
+      max-width: 1360px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 40px;
+    }
+    footer h4 { color: var(--text-primary); font-size: 16px; margin-bottom: 16px; }
+    footer p, footer a {
+      font-size: 14px; line-height: 2; color: var(--text-muted); text-decoration: none;
+    }
+    footer a:hover { color: var(--gold-light); }
+    footer .footer-brand { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--text-primary); margin-bottom: 12px; }
+    footer .copyright {
+      text-align: center; padding-top: 30px; margin-top: 40px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 13px; color: var(--text-muted);
+    }
+
+    /* ===== Animations ===== */
+    .fade-in {
+      opacity: 0; transform: translateY(30px);
+      transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .upload-container { grid-template-columns: 1fr; }
+      footer .footer-inner { grid-template-columns: 1fr; }
+      .case-grid { grid-template-columns: repeat(2, 1fr); }
+      .trend-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      section { padding: 60px 20px; }
+      .nav-inner { padding: 12px 20px; }
+      .hero { padding: 100px 20px 60px; }
+      .nav-links { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .case-grid { grid-template-columns: 1fr; }
+      .trend-grid { grid-template-columns: 1fr; }
+      .article-overlay { padding: 16px; }
+      .article-modal .article-header { padding: 24px 20px 16px; }
+      .article-modal .article-body { padding: 20px; }
+    }
+
+    /* ===== Cinema gradient helpers ===== */
+    .cinema-bg-1 { background: linear-gradient(145deg, #1a1410, #0d0d0d); }
+    .cinema-bg-2 { background: linear-gradient(145deg, #141a18, #0d0d0d); }
+    .cinema-bg-3 { background: linear-gradient(145deg, #1a1014, #0d0d0d); }
+    .cinema-bg-4 { background: linear-gradient(145deg, #14101a, #0d0d0d); }
+    .cinema-bg-5 { background: linear-gradient(145deg, #1a1a14, #0d0d0d); }
+    .cinema-bg-6 { background: linear-gradient(145deg, #10181a, #0d0d0d); }
+    .cinema-bg-7 { background: linear-gradient(145deg, #1a1418, #0d0d0d); }
+    .cinema-bg-8 { background: linear-gradient(145deg, #141414, #0d0d0d); }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== NAV ==================== -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-brand">
+        <div class="brand-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+        <span>薇美AI Pro</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">功能</a>
+        <a href="#cases">案例库</a>
+        <a href="#trends">资讯</a>
+        <a href="#upload-area" style="padding:8px 22px;background:linear-gradient(135deg,var(--gold),var(--amber));color:var(--bg-deep);border-radius:30px;font-size:13px;font-weight:600;">开始体验</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== HERO ==================== -->
+  <section class="hero" id="home">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-badges">
+          <span class="hero-badge highlight"><i class="fas fa-shield-halved" style="margin-right:6px;"></i>AI美学模拟</span>
+          <span class="hero-badge"><i class="far fa-gem" style="margin-right:6px;"></i>安全免责</span>
+          <span class="hero-badge"><i class="far fa-eye" style="margin-right:6px;"></i>隐私保护</span>
+        </div>
+        <h1>你的专属<br><em>医美美学</em><br>全能搭档</h1>
+        <p class="hero-sub">
+          面部分析 · 变美模拟 · 3D人像雕塑 · 骨相旋转视频<br>
+          从美学洞察到内容创作，一站式搞定。
+        </p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="#upload-area" style="padding:14px 36px;background:linear-gradient(135deg,var(--gold),var(--amber));color:var(--bg-deep);border-radius:30px;text-decoration:none;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px;">
+            上传照片开始 <i class="fas fa-arrow-right" style="font-size:14px;"></i>
+          </a>
+          <a href="#cases" style="padding:14px 36px;border:1.5px solid rgba(212,168,75,0.3);color:var(--gold-light);border-radius:30px;text-decoration:none;font-weight:500;font-size:15px;display:inline-flex;align-items:center;gap:8px;">
+            浏览案例库 <i class="far fa-images"></i>
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-ring">
+          <div class="hero-ring-dot"></div>
+          <div class="hero-ring-dot"></div>
+          <div class="hero-ring-dot"></div>
+          <div class="hero-ring-dot"></div>
+          <div class="hero-ring-inner">
+            <div class="hero-ring-icon"><i class="fas fa-venus-mars"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FEATURES ==================== -->
+  <section id="features">
+    <div class="section-inner">
+      <div class="section-label">Core Services</div>
+      <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:20px;">
+        <div>
+          <h2 class="section-title">六大核心功能</h2>
+          <p class="section-desc">从美学分析到内容产出，覆盖医美创作全链路。</p>
+        </div>
+      </div>
+      <div class="features-grid">
+        <a class="feature-card" href="#upload-area" onclick="switchMode(1)">
+          <div class="icon-wrap"><i class="fas fa-face-smile"></i></div>
+          <h3>分析 + 模拟</h3>
+          <p>面部分析 → 变美效果图 → 图文/视频输出</p>
+          <span class="tag"><i class="fas fa-bolt" style="margin-right:4px;"></i>热门</span>
+        </a>
+        <a class="feature-card" href="#upload-area" onclick="switchMode(2)">
+          <div class="icon-wrap"><i class="fas fa-sculpture"></i></div>
+          <h3>静态人像雕塑</h3>
+          <p>经典石膏像/骨骼雕塑图，骨相结构展示</p>
+          <span class="tag">艺术</span>
+        </a>
+        <a class="feature-card" href="#upload-area" onclick="switchMode(3)">
+          <div class="icon-wrap"><i class="fas fa-video"></i></div>
+          <h3>3D 旋转雕塑视频</h3>
+          <p>360°骨相视频，骨相标注 + 金色高亮</p>
+          <span class="tag"><i class="fas fa-star" style="margin-right:4px;"></i>旗舰</span>
+        </a>
+        <a class="feature-card" href="#cases">
+          <div class="icon-wrap"><i class="fas fa-folder-open"></i></div>
+          <h3>案例库浏览</h3>
+          <p>全项目案例库，3D电影级雕塑图示</p>
+          <span class="tag">灵感</span>
+        </a>
+        <a class="feature-card" href="#upload-area" onclick="switchMode(5)">
+          <div class="icon-wrap"><i class="fas fa-newspaper"></i></div>
+          <h3>图文笔记 + 科普</h3>
+          <p>一键生成美学科普图文和短视频</p>
+          <span class="tag">创作</span>
+        </a>
+        <a class="feature-card" href="#trends">
+          <div class="icon-wrap"><i class="fas fa-fire"></i></div>
+          <h3>最新趋势追踪</h3>
+          <p>联网实时医美热点，卡片式阅读</p>
+          <span class="tag">动态</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== UPLOAD ==================== -->
+  <section id="upload-area">
+    <div class="section-inner">
+      <div class="section-label">Get Started</div>
+      <h2 class="section-title">上传你的照片</h2>
+      <p class="section-desc">选择一张清晰的正面照片，即可开始美学之旅。数据仅本次使用，不会保存。</p>
+
+      <div class="mode-pills" id="modePills">
+        <button class="mode-pill active" data-mode="1"><i class="fas fa-face-smile" style="margin-right:6px;"></i>分析+模拟</button>
+        <button class="mode-pill" data-mode="2"><i class="fas fa-sculpture" style="margin-right:6px;"></i>人像雕塑</button>
+        <button class="mode-pill" data-mode="3"><i class="fas fa-video" style="margin-right:6px;"></i>3D旋转视频</button>
+        <button class="mode-pill" data-mode="4"><i class="fas fa-folder-open" style="margin-right:6px;"></i>案例库</button>
+        <button class="mode-pill" data-mode="5"><i class="fas fa-newspaper" style="margin-right:6px;"></i>图文笔记</button>
+        <button class="mode-pill" data-mode="6"><i class="fas fa-fire" style="margin-right:6px;"></i>趋势追踪</button>
+      </div>
+
+      <div class="upload-container">
+        <div>
+          <div class="upload-box" id="dropZone">
+            <i class="fas fa-cloud-arrow-up"></i>
+            <h4>拖拽照片到此处</h4>
+            <p>或点击下方按钮选择文件 · 支持 JPG / PNG / WebP</p>
+            <input type="file" id="fileInput" accept="image/*" style="display:none;">
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+              <i class="fas fa-folder-open" style="margin-right:8px;"></i>选择照片
+            </button>
+          </div>
+          <div class="upload-actions" style="margin-top:16px;">
+            <button class="btn-primary" onclick="startGeneration()">
+              <i class="fas fa-wand-magic-sparkles" style="margin-right:6px;"></i>开始生成
+            </button>
+            <button class="btn-outline" onclick="resetUpload()">
+              <i class="fas fa-rotate" style="margin-right:6px;"></i>重新上传
+            </button>
+          </div>
+        </div>
+        <div>
+          <div class="upload-preview" id="previewArea">
+            <img id="previewImg" alt="预览">
+            <div class="placeholder" id="placeholderText">
+              <i class="fas fa-image"></i>
+              <p>等待上传照片...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 3D视频生成管线 (mode 3 可见) ===== -->
+      <div id="videoPipelineArea" style="display:none;">
+        <div class="pipeline-steps">
+          <div class="pipeline-step" id="step1">
+            <div class="step-num">1</div>
+            <div class="step-info">
+              <h4>真人照片 → 3D大理石雕塑</h4>
+              <p>AI将你的照片转化为经典白色卡拉拉大理石雕塑</p>
+            </div>
+            <div class="step-status" id="step1Status">等待中</div>
+          </div>
+          <div class="pipeline-step" id="step2">
+            <div class="step-num">2</div>
+            <div class="step-info">
+              <h4>雕塑图 → 旋转展示视频</h4>
+              <p>生成10秒360°旋转展示视频，骨相标注+金色高亮</p>
+            </div>
+            <div class="step-status" id="step2Status">等待中</div>
+          </div>
+          <div class="pipeline-step" id="step3">
+            <div class="step-num">3</div>
+            <div class="step-info">
+              <h4>导出 & 预览</h4>
+              <p>视频已生成，可预览、下载和分享</p>
+            </div>
+            <div class="step-status" id="step3Status">等待中</div>
+          </div>
+          <div class="progress-bar">
+            <div class="fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <div class="video-preview-container" id="videoPreviewContainer">
+          <video id="videoPlayer" controls playsinline>
+            <source id="videoSource" src="" type="video/mp4">
+          </video>
+          <div class="video-actions">
+            <button class="btn-primary" id="downloadVideoBtn">
+              <i class="fas fa-download"></i> 导出视频
+            </button>
+            <button class="btn-outline" onclick="document.getElementById('videoPlayer').play()">
+              <i class="fas fa-play"></i> 重新播放
+            </button>
+            <button class="btn-outline" style="margin-left:auto;" onclick="resetVideoPipeline()">
+              <i class="fas fa-rotate"></i> 重新生成
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== RESULTS ==================== -->
+  <section id="result-section">
+    <div class="section-inner">
+      <div class="section-label">Results</div>
+      <h2 class="section-title">生成结果</h2>
+      <p class="section-desc" id="resultDesc">选择模式并上传照片后，结果将展示在这里。</p>
+      <div class="result-grid" id="resultGrid"></div>
+    </div>
+  </section>
+
+  <!-- ==================== CASE LIBRARY ==================== -->
+  <section id="cases">
+    <div class="section-inner">
+      <div class="section-label">Case Library</div>
+      <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:20px;">
+        <div>
+          <h2 class="section-title">全项目案例库</h2>
+          <p class="section-desc">覆盖医疗整形全品类，每例均配3D电影级人像雕塑图示，点击查看详情。</p>
+        </div>
+      </div>
+      <div class="case-categories" id="caseCategories"></div>
+      <div class="case-grid" id="caseGrid"></div>
+    </div>
+  </section>
+
+  <!-- ==================== TRENDS ==================== -->
+  <section id="trends">
+    <div class="section-inner">
+      <div class="section-label">Trending Now</div>
+      <h2 class="section-title">最新医美资讯</h2>
+      <p class="section-desc">追踪行业前沿动态，点击卡片阅读完整文章。</p>
+      <div class="trend-grid" id="trendGrid"></div>
+    </div>
+  </section>
+
+  <!-- ==================== DISCLAIMER ==================== -->
+  <div class="disclaimer-bar">
+    <strong>⚠️ 安全声明：</strong> 所有生成内容均为 AI 美学模拟，<strong>不构成医疗建议</strong>。具体方案需正规医生面诊后确定。<br>
+    <strong>🔒 隐私承诺：</strong> 数据仅本次使用，不会保存。每次会话结束后自动清除。
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand"><i class="fas fa-wand-magic-sparkles" style="margin-right:8px;"></i>薇美AI Pro</div>
+        <p style="max-width:360px;">集美学分析、医美效果模拟、人像雕塑展示和3D旋转视频生成于一体的全能智能体。<br><br>效果为AI模拟，具体方案需正规医生面诊。</p>
+      </div>
+      <div>
+        <h4>功能</h4>
+        <a href="#features">面部分析</a><br>
+        <a href="#features">人像雕塑</a><br>
+        <a href="#features">3D旋转视频</a><br>
+        <a href="#cases">案例库</a>
+      </div>
+      <div>
+        <h4>关于</h4>
+        <a href="#">安全声明</a><br>
+        <a href="#">隐私政策</a><br>
+        <a href="#">使用条款</a>
+      </div>
+    </div>
+    <div class="copyright">
+      © 2026 薇美AI Pro · 效果为AI模拟，不构成医疗建议 · Made with <i class="fas fa-heart" style="color:var(--gold);"></i>
+    </div>
+  </footer>
+
+  <!-- ==================== GENERATOR MODAL ==================== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-loader"></div>
+      <h3 id="modalTitle">正在分析面部特征...</h3>
+      <p id="modalDesc">正在进行AI美学分析，请稍候...</p>
+      <p style="margin-top:16px;font-size:12px;color:var(--text-muted);">效果为AI模拟，不构成医疗建议</p>
+    </div>
+  </div>
+
+  <!-- ==================== ARTICLE MODAL ==================== -->
+  <div class="article-overlay" id="articleOverlay">
+    <div class="article-modal" id="articleModal">
+      <div class="article-header">
+        <button class="close-btn" onclick="closeArticle()"><i class="fas fa-xmark"></i></button>
+        <div class="article-cat" id="articleCat">趋势洞察</div>
+        <h2 id="articleTitle">文章标题</h2>
+      </div>
+      <div class="article-body" id="articleBody">
+        <p>加载中...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== State =====
+    let currentMode = 1;
+    let uploadedFile = null;
+    let currentCat = 'all';
+
+    const modeNames = {
+      1: '分析+模拟', 2: '静态人像雕塑', 3: '3D旋转雕塑视频',
+      4: '案例库浏览', 5: '图文笔记+科普视频', 6: '最新趋势追踪'
+    };
+
+    const modeResults = {
+      1: { title: '变美效果模拟', items: [
+        { title: '面部比例分析', desc: '三庭五眼、面部对称度、轮廓线分析结果', icon: 'fa-chart-pie' },
+        { title: '变美效果图', desc: '基于面部特征优化的AI模拟效果', icon: 'fa-wand-magic-sparkles' },
+        { title: '优化建议报告', desc: '个性化美学优化建议方案', icon: 'fa-file-lines' }
+      ]},
+      2: { title: '人像雕塑', items: [
+        { title: '经典石膏雕像', desc: '纯白大理石质感·骨相结构展示', icon: 'fa-sculpture' },
+        { title: '骨骼结构图', desc: '面部骨骼解剖结构标注图', icon: 'fa-bone' }
+      ]},
+      3: { title: '3D旋转雕塑视频', items: [
+        { title: '360°旋转视频', desc: '纯白大理石质感·Y轴360°旋转·骨相标注', icon: 'fa-video' },
+        { title: '骨相分析报告', desc: '颧骨·下颌角·鼻骨·眉弓关键数据', icon: 'fa-chart-simple' },
+        { title: '发布文案建议', desc: '适配小红书/抖音的文案模板', icon: 'fa-pen-fancy' }
+      ]},
+      4: { title: '案例库', items: [
+        { title: '相似脸型案例', desc: '基于你的面部特征的相似案例推荐', icon: 'fa-images' },
+        { title: '热门方案排行', desc: '最受关注的美学设计方案', icon: 'fa-ranking-star' }
+      ]},
+      5: { title: '图文笔记 & 科普', items: [
+        { title: '美学图文笔记', desc: '适配小红书的精美图文物料', icon: 'fa-newspaper' },
+        { title: '科普短视频', desc: '30秒医美学知识科普视频', icon: 'fa-film' },
+        { title: '话题标签建议', desc: '基于内容生成的SEO标签', icon: 'fa-hashtag' }
+      ]},
+      6: { title: '趋势追踪', items: [
+        { title: '实时热点', desc: '当前医美行业最热话题', icon: 'fa-fire' },
+        { title: '趋势分析报告', desc: '结合你面部特征的趋势匹配建议', icon: 'fa-chart-line' }
+      ]}
+    };
+
+    // ===== CASE DATA =====
+    const caseData = [
+      // 眼部整形
+      { cat: '眼部整形', title: '埋线双眼皮', desc: '微创重睑术，恢复快、痕迹轻，适合眼皮薄、无多余脂肪的初眼。', image: 'sculptures/01_eye.png', icon: 'fa-eye' },
+      { cat: '眼部整形', title: '全切开双眼皮', desc: '经典重睑成形术，可同时处理多余皮肤和脂肪，效果持久稳定。', image: 'sculptures/01_eye.png', icon: 'fa-eye' },
+      { cat: '眼部整形', title: '内切祛眼袋', desc: '经结膜入路去除眶隔脂肪，无痕祛眼袋，适合皮肤弹性好的年轻人群。', image: 'sculptures/01_eye.png', icon: 'fa-eye' },
+      { cat: '眼部整形', title: '外切祛眼袋', desc: '经皮肤入路去除多余脂肪和松弛皮肤，改善眼袋+下睑细纹。', image: 'sculptures/01_eye.png', icon: 'fa-eye' },
+      { cat: '眼部整形', title: '开内眼角', desc: '内眦赘皮矫正术，延长眼裂，让眼睛更显大、更有神。', image: 'sculptures/01_eye.png', icon: 'fa-eye' },
+      { cat: '眼部整形', title: '提眉术', desc: '眉下/眉上切口提升，改善上睑松弛、眉下垂，恢复眼部年轻态。', image: 'sculptures/01_eye.png', icon: 'fa-eye' },
+      { cat: '眼部整形', title: '上睑下垂矫正', desc: '提上睑肌缩短/悬吊术，矫正先天性或获得性上睑下垂，恢复视野和对称。', image: 'sculptures/01_eye.png', icon: 'fa-eye' },
+      { cat: '眼部整形', title: '眼睑修复', desc: '二次修复手术，针对失败重睑/眼袋术后并发症进行精细化修复。', image: 'sculptures/01_eye.png', icon: 'fa-eye' },
+      // 鼻部整形
+      { cat: '鼻部整形', title: '硅胶隆鼻', desc: '经典假体隆鼻，L型/I型硅胶假体植入，改善鼻梁高度和轮廓。', image: 'sculptures/02_nose.png', icon: 'fa-nose' },
+      { cat: '鼻部整形', title: '膨体隆鼻', desc: 'ePTFE膨体植入，微孔结构促进组织相容，效果自然逼真。', image: 'sculptures/02_nose.png', icon: 'fa-nose' },
+      { cat: '鼻部整形', title: '自体软骨隆鼻', desc: '取耳软骨/鼻中隔软骨/肋软骨，用于鼻尖塑形和鼻延长。', image: 'sculptures/02_nose.png', icon: 'fa-nose' },
+      { cat: '鼻部整形', title: '鼻翼缩小', desc: '鼻翼基底切除/外切，矫正鼻翼过宽、鼻孔过大，协调鼻部比例。', image: 'sculptures/02_nose.png', icon: 'fa-nose' },
+      { cat: '鼻部整形', title: '鼻头缩小', desc: '鼻尖肥大矫正，重塑鼻尖软骨支架，实现精致鼻尖形态。', image: 'sculptures/02_nose.png', icon: 'fa-nose' },
+      { cat: '鼻部整形', title: '鼻综合整形', desc: '全面鼻部重塑，涵盖鼻梁、鼻尖、鼻翼、鼻孔等多维度调整。', image: 'sculptures/02_nose.png', icon: 'fa-nose' },
+      { cat: '鼻部整形', title: '驼峰鼻矫正', desc: '截骨/磨骨矫正鼻背凸起，配合鼻尖调整，塑造流畅鼻背线条。', image: 'sculptures/02_nose.png', icon: 'fa-nose' },
+      { cat: '鼻部整形', title: '鼻修复', desc: '针对假体移位/感染/外观不满意等问题的二次/多次修复手术。', image: 'sculptures/02_nose.png', icon: 'fa-nose' },
+      // 面部轮廓
+      { cat: '面部轮廓', title: '下颌角截骨', desc: '口内入路截除肥大下颌角，改善方脸、国字脸，塑造柔和V-line。', image: 'sculptures/03_jaw.png', icon: 'fa-face-smile' },
+      { cat: '面部轮廓', title: '颧骨内推', desc: '颧骨截骨内推+固定，降低颧弓宽度，改善面部比例和线条。', image: 'sculptures/03_jaw.png', icon: 'fa-face-smile' },
+      { cat: '面部轮廓', title: '颏成型术', desc: '下巴截骨前移/后缩矫正，改善短下巴、后缩下巴，协调侧面轮廓。', image: 'sculptures/03_jaw.png', icon: 'fa-face-smile' },
+      { cat: '面部轮廓', title: '轮廓三件套', desc: '下颌角+颧骨+颏部联合手术，全面部轮廓重塑。', image: 'sculptures/03_jaw.png', icon: 'fa-face-smile' },
+      { cat: '面部轮廓', title: 'V-line 成形术', desc: '下颌角截骨+皮质骨切除+下巴成形，打造流畅V形面部轮廓。', image: 'sculptures/03_jaw.png', icon: 'fa-face-smile' },
+      { cat: '面部轮廓', title: '面部不对称矫正', desc: '针对先天性/后天性面部不对称的综合截骨+软组织调整方案。', image: 'sculptures/03_jaw.png', icon: 'fa-face-smile' },
+      // 胸部整形
+      { cat: '胸部整形', title: '假体隆胸', desc: '腋下/乳晕/下皱襞切口植入硅凝胶假体，增加乳房间隙和体积。', image: 'sculptures/04_chest.png', icon: 'fa-venus' },
+      { cat: '胸部整形', title: '自体脂肪隆胸', desc: '抽取自身脂肪纯化后注射移植，自然增大胸部，手感真实。', image: 'sculptures/04_chest.png', icon: 'fa-venus' },
+      { cat: '胸部整形', title: '乳房下垂矫正', desc: '乳晕周围/垂直/倒T切口上提乳腺组织，恢复乳房年轻位置。', image: 'sculptures/04_chest.png', icon: 'fa-venus' },
+      { cat: '胸部整形', title: '巨乳缩小', desc: '切除多余乳腺和皮肤，减轻乳房重量，缓解肩颈负担。', image: 'sculptures/04_chest.png', icon: 'fa-venus' },
+      { cat: '胸部整形', title: '乳头乳晕缩小', desc: '乳头内陷矫正+乳晕缩小，美化乳房细节。', image: 'sculptures/04_chest.png', icon: 'fa-venus' },
+      { cat: '胸部整形', title: '隆胸修复', desc: '假体取出/更换/包膜挛缩处理，解决隆胸术后并发症。', image: 'sculptures/04_chest.png', icon: 'fa-venus' },
+      // 吸脂塑形
+      { cat: '吸脂塑形', title: '面部吸脂', desc: '颊脂垫/双下巴/下颌缘吸脂，精细化面部轮廓减容。', image: 'sculptures/05_body.png', icon: 'fa-person' },
+      { cat: '吸脂塑形', title: '腰腹环吸', desc: '腰腹部360°环形吸脂，塑造纤细腰线和平坦腹部。', image: 'sculptures/05_body.png', icon: 'fa-person' },
+      { cat: '吸脂塑形', title: '大腿吸脂', desc: '大腿内外侧+前后侧多维度吸脂，改善腿型比例。', image: 'sculptures/05_body.png', icon: 'fa-person' },
+      { cat: '吸脂塑形', title: '手臂吸脂', desc: '上臂后侧和前臂精细吸脂，告别蝴蝶袖。', image: 'sculptures/05_body.png', icon: 'fa-person' },
+      { cat: '吸脂塑形', title: '背部吸脂', desc: '背部脂肪堆积精细吸除，改善内衣勒痕和背部线条。', image: 'sculptures/05_body.png', icon: 'fa-person' },
+      { cat: '吸脂塑形', title: '脂肪填充', desc: '吸脂获取的脂肪经纯化后填充面部/胸部/臀部等部位。', image: 'sculptures/05_body.png', icon: 'fa-person' },
+      // 面部抗衰
+      { cat: '面部抗衰', title: '大切口拉皮', desc: 'SMAS筋膜层提升+多余皮肤切除，深层复位，效果持久。', image: 'sculptures/06_youth.png', icon: 'fa-clock' },
+      { cat: '面部抗衰', title: '小切口拉皮', desc: '微创切口筋膜悬吊，适合轻度松弛，恢复快速。', image: 'sculptures/06_youth.png', icon: 'fa-clock' },
+      { cat: '面部抗衰', title: '线雕提升', desc: '可吸收线材提拉复位，即时提升效果，刺激胶原再生。', image: 'sculptures/06_youth.png', icon: 'fa-clock' },
+      { cat: '面部抗衰', title: '颈部提升', desc: '颈阔肌成形+颈部吸脂/拉皮，改善火鸡颈和颈纹。', image: 'sculptures/10_neck.png', icon: 'fa-clock' },
+      { cat: '面部抗衰', title: '中面部提升', desc: '颧脂肪垫复位提升，改善法令纹和苹果肌下垂。', image: 'sculptures/06_youth.png', icon: 'fa-clock' },
+      // 注射微整
+      { cat: '注射微整', title: '肉毒素除皱', desc: '注射肉毒杆菌素放松表情肌，改善眉间纹、鱼尾纹、抬头纹。', image: 'sculptures/08_lip.png', icon: 'fa-syringe' },
+      { cat: '注射微整', title: '玻尿酸填充', desc: '透明质酸注射填充鼻唇沟/泪沟/苹果肌/下巴等，即刻见效。', image: 'sculptures/08_lip.png', icon: 'fa-syringe' },
+      { cat: '注射微整', title: '再生材料填充', desc: '少女针/濡白天使等再生类材料，刺激自身胶原持续新生。', image: 'sculptures/08_lip.png', icon: 'fa-syringe' },
+      { cat: '注射微整', title: '肉毒素瘦脸', desc: '咬肌注射，缩小咬肌体积，改善面部轮廓，非手术V脸。', image: 'sculptures/03_jaw.png', icon: 'fa-syringe' },
+      { cat: '注射微整', title: '胶原蛋白填充', desc: '双美/肤莱美等胶原蛋白注射，改善黑眼圈、泪沟、细纹。', image: 'sculptures/07_skin.png', icon: 'fa-syringe' },
+      // 皮肤美容
+      { cat: '皮肤美容', title: '光子嫩肤', desc: '强脉冲光（IPL）改善肤色不均、红血丝、毛孔粗大。', image: 'sculptures/07_skin.png', icon: 'fa-sparkles' },
+      { cat: '皮肤美容', title: '皮秒激光', desc: '超短脉宽激光，有效祛斑（雀斑/晒斑/黄褐斑）、纹身、嫩肤。', image: 'sculptures/07_skin.png', icon: 'fa-sparkles' },
+      { cat: '皮肤美容', title: '点阵激光', desc: '二氧化碳/铒激光点阵式剥脱，改善痘坑、疤痕、毛孔。', image: 'sculptures/07_skin.png', icon: 'fa-sparkles' },
+      { cat: '皮肤美容', title: '热玛吉', desc: '单极射频紧肤，刺激胶原收缩再生，非手术面部紧致提升。', image: 'sculptures/06_youth.png', icon: 'fa-sparkles' },
+      { cat: '皮肤美容', title: '超声炮', desc: '微聚焦超声技术，直达SMAS筋膜层，深层提拉紧致。', image: 'sculptures/06_youth.png', icon: 'fa-sparkles' },
+      { cat: '皮肤美容', title: '水光注射', desc: '玻尿酸+营养成分皮肤内注射，深层补水、改善肤质。', image: 'sculptures/07_skin.png', icon: 'fa-sparkles' },
+      { cat: '皮肤美容', title: '黄金微针', desc: '微针+射频联合，刺激胶原重塑，改善毛孔、细纹、痘坑。', image: 'sculptures/07_skin.png', icon: 'fa-sparkles' },
+      { cat: '皮肤美容', title: '化学焕肤', desc: '果酸/水杨酸/TCA等化学剥脱，改善痘痘、色素、光老化。', image: 'sculptures/07_skin.png', icon: 'fa-sparkles' },
+      // 口腔颌面
+      { cat: '口腔颌面', title: '正颌手术', desc: '上颌Le Fort截骨+下颌矢状劈开，矫正严重骨性错颌畸形。', image: 'sculptures/03_jaw.png', icon: 'fa-tooth' },
+      { cat: '口腔颌面', title: '下颌角截骨', desc: '口内入路截骨改善方脸，与正颌联合可同步矫正咬合+轮廓。', image: 'sculptures/03_jaw.png', icon: 'fa-tooth' },
+      { cat: '口腔颌面', title: '颧骨降低', desc: '口内入路截骨降低颧骨体+颧弓，改善面中部宽度。', image: 'sculptures/03_jaw.png', icon: 'fa-tooth' },
+      // 毛发移植
+      { cat: '毛发移植', title: 'FUE 毛发移植', desc: '毛囊单位提取术，逐株提取后枕健康毛囊，种植到脱发区域。', image: 'sculptures/09_hair.png', icon: 'fa-scissors' },
+      { cat: '毛发移植', title: '发际线种植', desc: '根据面部比例设计发际线形态，艺术化种植，自然真实。', image: 'sculptures/09_hair.png', icon: 'fa-scissors' },
+      { cat: '毛发移植', title: '眉毛种植', desc: '精细单根种植眉部，设计眉形，自然浓密。', image: 'sculptures/09_hair.png', icon: 'fa-scissors' },
+      { cat: '毛发移植', title: '鬓角/胡须种植', desc: '男性鬓角和胡须美学种植，改善面部轮廓和男性气质。', image: 'sculptures/09_hair.png', icon: 'fa-scissors' },
+      // 私密整形
+      { cat: '私密整形', title: '阴道紧缩术', desc: '阴道后壁修补/埋线紧缩，改善松弛，提升生活质量。', image: 'sculptures/11_bust.png', icon: 'fa-lock' },
+      { cat: '私密整形', title: '小阴唇缩小', desc: '小阴唇肥大矫正，改善摩擦不适和外观。', image: 'sculptures/11_bust.png', icon: 'fa-lock' },
+      { cat: '私密整形', title: '阴蒂包皮切除', desc: '阴蒂包皮粘连松解/切除，改善敏感度和外观。', image: 'sculptures/11_bust.png', icon: 'fa-lock' },
+      { cat: '私密整形', title: 'G点增强', desc: '玻尿酸/自体脂肪注射G点区域，改善敏感度。', image: 'sculptures/11_bust.png', icon: 'fa-lock' },
+      // 其他
+      { cat: '其他', title: '瘢痕修复', desc: '手术/外伤瘢痕切除+精细缝合+激光/注射综合治疗。', image: 'sculptures/07_skin.png', icon: 'fa-bandage' },
+      { cat: '其他', title: '多汗症治疗', desc: '肉毒素注射腋下/手掌/足底，抑制汗腺分泌，改善多汗。', image: 'sculptures/12_full.png', icon: 'fa-droplet' },
+      { cat: '其他', title: '脂肪瘤切除', desc: '体表脂肪瘤微创切除，精细缝合，最小化瘢痕。', image: 'sculptures/05_body.png', icon: 'fa-scissors' },
+    ];
+
+    // ===== TREND DATA (Article Cards) =====
+    const trendData = [
+      {
+        cat: '趋势洞察', title: '2026骨相美学：轮廓固定为何持续霸榜？',
+        summary: '从面部折叠度到骨相支撑，全面解析轮廓固定成为年度最热项目的底层逻辑。',
+        icon: 'fa-chart-line', bgClass: 'cinema-bg-1',
+        content: '2026年，「骨相美学」搜索量同比增长213%，轮廓固定相关项目占据医美热搜榜前三。\n\n核心驱动因素有三：一是社交媒体上「骨相化妆」「骨相美人」等内容持续引爆话题；二是再生材料（濡白天使、少女针等）的普及使非手术轮廓调整效果更持久；三是用户审美从「五官精致」转向「骨相高级」，更关注面部整体框架。\n\n2026年下半年趋势预测：个性化骨相设计将成为主流，AI模拟面诊工具使用率预计增长300%。'
+      },
+      {
+        cat: '材料前沿', title: '再生材料 vs 玻尿酸：长效填充时代来临',
+        summary: '少女针、濡白天使、艾维岚等再生类材料崛起，医美填充进入「胶原自生」新纪元。',
+        icon: 'fa-flask', bgClass: 'cinema-bg-3',
+        content: '传统玻尿酸填充维持时间6-12个月，而再生类材料（PLLA/PCL/CMC）可刺激自身胶原蛋白持续新生，效果维持1-4年。\n\n关键差异：\n• 玻尿酸：即时填充，可溶解，适合首次尝试和动态部位\n• 少女针（PCL+CMC）：即刻填充+长期胶原刺激，适合轮廓支撑\n• 濡白天使（PLLA+玻尿酸）：兼具填充和再生功能，适合骨性结构增强\n• 艾维岚（PLLA纯再生）：无即刻填充，3个月后胶原逐渐新生，效果自然\n\n选择建议：根据目标部位、期望效果和预算综合评估，建议在专业医生指导下选择。'
+      },
+      {
+        cat: '审美风向', title: '「妈生感」审美持续主导，过度改造退潮',
+        summary: '自然、保留辨识度的变美方向成为主流，追求「别人看不出你做了，但就是变好看了」。',
+        icon: 'fa-heart', bgClass: 'cinema-bg-5',
+        content: '从「网红脸」到「妈生脸」，医美审美经历了一次深刻转型。2024-2026年，「自然感」搜索量增长450%。\n\n「妈生感」审美的核心原则：\n1. 保留个人辨识度：不追求标准化五官，而是优化原生特征\n2. 循序渐进：从最小的干预开始，尊重面部自然衰老节奏\n3. 整体协调：不孤立看待某个部位，而是考虑全脸比例和谐\n4. 骨相优先：先优化骨骼框架，再处理软组织细节\n\n典型案例：从追求高挺鼻梁到注重鼻额角过渡的自然感，从追求尖下巴到强调下巴与下颌线的自然衔接。'
+      },
+      {
+        cat: '技术突破', title: 'AI+3D打印：个性化植入物开启定制时代',
+        summary: '3D打印PEEK/钛合金定制植入物在颌面整形中的应用，实现毫米级精准重建。',
+        icon: 'fa-cube', bgClass: 'cinema-bg-2',
+        content: '传统颌面整形手术高度依赖医生经验，而AI+3D打印技术的融入正在改变这一局面。\n\n技术流程：\n1. CT/MRI数据采集 → 三维重建骨骼模型\n2. AI辅助设计：基于目标美学效果自动生成优化方案\n3. 3D打印个性化植入物：PEEK/钛合金材料，毫米级精度\n4. 术中导航：实时对比术前设计与实际操作\n\n优势：手术时间缩短40%，并发症风险降低60%，术后效果可预测性大幅提升。\n\n2026年已有超过30%的颌面整形中心引入该技术。'
+      },
+      {
+        cat: '市场数据', title: '轻医美复购率攀升，胶原蛋白品类增长迅猛',
+        summary: '2026上半年轻医美市场同比增长35%，胶原蛋白注射项目增速最快。',
+        icon: 'fa-chart-bar', bgClass: 'cinema-bg-6',
+        content: '据行业数据显示，2026年上半年中国轻医美市场规模达985亿元，同比增长35%。\n\n增长最快的细分品类：\n1. 胶原蛋白注射（+180%）：双美、肤莱美等品牌快速增长\n2. 再生材料注射（+120%）：消费者追求长效解决方案\n3. 光电抗衰（+45%）：超声炮、热玛吉等持续热门\n\n用户画像变化：\n• 25-35岁用户占比增长至58%，年轻化趋势明显\n• 男性用户占比从12%提升至19%\n• 平均客单价下降12%，但年均消费频次从1.8次提升至2.9次\n\n预测：2026下半年轻医美市场规模有望突破1200亿元。'
+      },
+      {
+        cat: '趋势洞察', title: '非手术面部年轻化：联合治疗成为新标配',
+        summary: '「光电+注射+线雕」的组合治疗模式，正在替代单一项目的传统方案。',
+        icon: 'fa-cubes', bgClass: 'cinema-bg-4',
+        content: '单一项目的局限性日益明显，2026年「联合治疗」成为面部年轻化的新标配。\n\n经典联合方案：\n• 超声炮（深层提拉）+ 玻尿酸（容积补充）+ 肉毒素（动态纹管理）\n• 热玛吉（全层紧致）+ 再生材料（骨膜层支撑）+ 胶原蛋白（肤质改善）\n• 线雕（中下面部提升）+ 脂肪填充（容量恢复）+ 光子（肤质焕亮）\n\n优势：作用于不同层次（骨骼-筋膜-脂肪-皮肤），实现全层次立体化年轻。\n\n建议：联合治疗需要医生制定个性化时序方案，通常间隔2-4周进行不同项目，总周期2-4个月。'
+      },
+      {
+        cat: '安全合规', title: '医美监管再升级：2026新规解读',
+        summary: '国家卫健委发布新版《医疗美容服务管理办法》，对机构资质、医生认证、广告宣传提出更高要求。',
+        icon: 'fa-scale-balanced', bgClass: 'cinema-bg-7',
+        content: '2026年6月，国家卫健委发布新版《医疗美容服务管理办法》，主要变化：\n\n1. 机构准入门槛提高：三级整形外科医院最低床位要求从50张提升至80张\n2. 医生执业更严格：主诊医师须具备5年以上整形外科临床经验（此前为3年）\n3. 广告监管收紧：禁止使用「最佳」「第一」「首创」等绝对化用语\n4. 透明定价要求：所有项目必须在醒目位置公示价格，禁止隐性收费\n5. 知情同意强化：AI模拟效果图须标注「效果仅为模拟，以实际手术为准」\n\n对行业影响：预计20%的不合规机构将退出市场，行业集中度进一步提升。'
+      },
+      {
+        cat: '材料前沿', title: '胶原蛋白赛道爆发：从填充到再生',
+        summary: '重组人源化胶原蛋白技术突破，推动胶原蛋白从填充材料向再生医学演进。',
+        icon: 'fa-dna', bgClass: 'cinema-bg-8',
+        content: '中国胶原蛋白市场规模2026年预计突破200亿元，其中注射用胶原蛋白占比45%。\n\n技术路线对比：\n• 动物源胶原蛋白（双美等）：取自猪皮/牛跟腱，保留三螺旋结构，支撑力好\n• 重组人源化胶原蛋白（锦波生物等）：基因工程技术生产，与人体100%同源，安全性更高\n\n最新突破：2026年初，III型重组人源化胶原蛋白获批用于面部真皮填充，标志着胶原蛋白正式进入「功能再生」时代——不仅能填充容量，还能诱导自身组织修复。\n\n未来展望：胶原蛋白+生长因子、胶原蛋白+干细胞外泌体的复合型产品已在临床研究阶段。'
+      },
+      {
+        cat: '审美风向', title: '男性医美崛起：「他经济」下的新蓝海',
+        summary: '男性医美用户年增长67%，眼袋、植发、轮廓成为最受关注项目。',
+        icon: 'fa-person', bgClass: 'cinema-bg-2',
+        content: '2026年，男性医美市场增速是女性市场的2.3倍，用户规模突破1800万人。\n\n最受欢迎的男性医美项目TOP5：\n1. 祛眼袋（占男性项目的32%）：改善疲劳感的刚需\n2. 植发（占28%）：发际线种植+头顶加密\n3. 肉毒素瘦脸（占18%）：咬肌缩小，改善面部轮廓\n4. 鼻整形（占12%）：自然风格为主，避免假体痕迹明显\n5. 下颌角整形（占10%）：追求清晰利落的下颌线条\n\n用户特征：30-45岁职场男性为主（62%），决策周期短、复购率高、价格敏感度低。\n\n男性审美的关键词：自然、硬朗、不露痕迹、提升职场竞争力。'
+      },
+      {
+        cat: '技术突破', title: '术中导航系统：机器人辅助整形的未来已来',
+        summary: '光学导航+机械臂辅助系统在颌面整形中的应用，手术精度提升至0.5mm级别。',
+        icon: 'fa-robot', bgClass: 'cinema-bg-5',
+        content: '2026年，手术导航系统在整形外科中的应用进入加速期。\n\n核心技术：\n• 光学跟踪：红外摄像机实时追踪手术器械与患者骨骼的相对位置\n• 术前规划融合：将CT三维模型与实际术野精准对齐\n• 实时预警：当手术路径偏离规划超过安全阈值时自动报警\n• 机械臂辅助（最新）：在术中导航引导下完成截骨/钻孔等精确操作\n\n临床数据：\n• 下颌角截骨对称度从传统手术的88%提升至97%\n• 颧骨内推误差从平均2.3mm降至0.7mm\n• 手术时间缩短30-50%\n\n当前挑战：设备成本高（单套系统约500万）、操作培训周期长、缺乏统一行业标准。'
+      },
+    ];
+
+    // ===== RENDER CASE LIBRARY =====
+    function renderCaseCategories() {
+      const cats = [...new Set(caseData.map(c => c.cat))];
+      const container = document.getElementById('caseCategories');
+      container.innerHTML = `<button class="case-cat-pill active" data-cat="all">全部</button>` +
+        cats.map(cat => `<button class="case-cat-pill" data-cat="${cat}">${cat}</button>`).join('');
+
+      container.querySelectorAll('.case-cat-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          container.querySelectorAll('.case-cat-pill').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentCat = btn.dataset.cat;
+          renderCases();
+        });
+      });
+    }
+
+    function renderCases() {
+      const grid = document.getElementById('caseGrid');
+      const filtered = currentCat === 'all'
+        ? caseData
+        : caseData.filter(c => c.cat === currentCat);
+
+      grid.innerHTML = filtered.map(c => `
+        <div class="case-item fade-in">
+          <div class="case-img">
+            <div class="case-bg" style="background-image: url('${c.image}');"></div>
+            <div class="cinema-overlay">
+              <div class="sculpture-icon"><i class="fas ${c.icon}"></i></div>
+              <div style="display:flex;gap:6px;margin-bottom:8px;">
+                <span class="sculpture-label">3D 电影级雕塑</span>
+              </div>
+            </div>
+          </div>
+          <div class="case-body">
+            <span class="case-cat-tag">${c.cat}</span>
+            <h4>${c.title}</h4>
+            <p>${c.desc}</p>
+          </div>
+        </div>
+      `).join('');
+
+      // Trigger animations
+      requestAnimationFrame(() => {
+        document.querySelectorAll('#caseGrid .fade-in').forEach(el => el.classList.add('visible'));
+      });
+    }
+
+    // ===== RENDER TRENDS =====
+    function renderTrends() {
+      const grid = document.getElementById('trendGrid');
+      grid.innerHTML = trendData.map((t, i) => `
+        <div class="trend-card fade-in" onclick="openArticle(${i})">
+          <div class="trend-banner ${t.bgClass}">
+            <div class="banner-overlay">
+              <div class="trend-icon" style="color:var(--gold);"><i class="fas ${t.icon}"></i></div>
+            </div>
+            <span class="cat-badge">${t.cat}</span>
+          </div>
+          <div class="trend-body">
+            <h4>${t.title}</h4>
+            <p>${t.summary}</p>
+            <div class="trend-meta">
+              <span><i class="far fa-clock" style="margin-right:4px;"></i>2026年</span>
+              <span class="read-more">阅读全文 <i class="fas fa-arrow-right" style="font-size:10px;margin-left:4px;"></i></span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      requestAnimationFrame(() => {
+        document.querySelectorAll('#trendGrid .fade-in').forEach(el => el.classList.add('visible'));
+      });
+    }
+
+    // ===== ARTICLE MODAL =====
+    function openArticle(index) {
+      const t = trendData[index];
+      document.getElementById('articleCat').textContent = t.cat;
+      document.getElementById('articleTitle').textContent = t.title;
+      document.getElementById('articleBody').innerHTML = `
+        <div class="article-img-placeholder ${t.bgClass}">
+          <i class="fas ${t.icon}"></i>
+        </div>
+        ${t.content.split('\n').map(line => line.trim() ? `<p>${line}</p>` : '').join('')}
+        <p style="margin-top:24px;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border-subtle);padding-top:16px;">
+          ⚠️ 本文内容为AI整理，仅供参考。具体医疗方案请咨询正规医疗机构。
+        </p>
+      `;
+      document.getElementById('articleOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeArticle() {
+      document.getElementById('articleOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('articleOverlay').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeArticle();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeArticle();
+    });
+
+    // ===== NAVIGATION =====
+    function switchMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.mode-pill').forEach(el => {
+        el.classList.toggle('active', parseInt(el.dataset.mode) === mode);
+      });
+      document.getElementById('result-section').classList.remove('visible');
+
+      if (mode === 3) {
+        // 3D旋转视频模式
+        document.querySelector('.upload-box h4').textContent = uploadedFile
+          ? '✅ 照片已就绪，点击开始生成旋转视频'
+          : '上传照片以生成3D旋转雕塑视频';
+        document.querySelector('.upload-box p').textContent = '支持JPG/PNG，建议使用清晰正面照';
+        toggleVideoPipeline(false);
+      } else {
+        toggleVideoPipeline(false);
+        if (uploadedFile) {
+          document.querySelector('.upload-box h4').textContent = '照片已就绪';
+          document.querySelector('.upload-box p').textContent = `当前模式：${modeNames[mode]}`;
+        }
+      }
+    }
+
+    document.querySelectorAll('.mode-pill').forEach(el => {
+      el.addEventListener('click', () => switchMode(parseInt(el.dataset.mode)));
+    });
+
+    // ===== VIDEO PIPELINE =====
+    const API_BASES = ['http://127.0.0.1:5000/api', 'http://localhost:5000/api'];
+    let API_BASE = API_BASES[0];
+    let currentTaskId = null;
+    let serverChecked = false;
+
+    function toggleVideoPipeline(show) {
+      const area = document.getElementById('videoPipelineArea');
+      if (area) area.style.display = show ? 'block' : 'none';
+    }
+
+    function updateStep(stepId, state, text) {
+      const el = document.getElementById(stepId);
+      const statusEl = document.getElementById(stepId + 'Status');
+      if (!el) return;
+      el.className = 'pipeline-step';
+      if (state === 'active') el.classList.add('active');
+      if (state === 'completed') el.classList.add('completed');
+      if (text && statusEl) statusEl.textContent = text;
+    }
+
+    function updateProgress(pct) {
+      const fill = document.getElementById('progressFill');
+      if (fill) fill.style.width = pct + '%';
+    }
+
+    async function checkServer() {
+      for (const base of API_BASES) {
+        try {
+          const resp = await fetch(base + '/status', { signal: AbortSignal.timeout(3000) });
+          const data = await resp.json();
+          if (data.ok) {
+            API_BASE = base;
+            serverChecked = true;
+            return true;
+          }
+        } catch(e) {}
+      }
+      serverChecked = false;
+      return false;
+    }
+
+    // Override startGeneration for mode 3
+    async function startGeneration() {
+      if (!uploadedFile) {
+        alert('请先上传一张照片！');
+        dropZone.classList.add('highlight');
+        return;
+      }
+
+      if (currentMode === 3) {
+        // 3D旋转视频模式 — 调用后端API管线
+        toggleVideoPipeline(true);
+        document.getElementById('videoPreviewContainer').classList.remove('visible');
+        updateStep('step1', 'active', '检查服务器连接...');
+        updateStep('step2', '', '等待中');
+        updateStep('step3', '', '等待中');
+        updateProgress(5);
+
+        // 检查后端服务是否运行
+        const serverOk = await checkServer();
+        if (!serverOk) {
+          updateStep('step1', '', `❌ 无法连接后端服务`);
+          updateStep('step2', '', '');
+          updateStep('step3', '', '');
+          updateProgress(0);
+          showServerAlert();
+          return;
+        }
+
+        try {
+          const formData = new FormData();
+          formData.append('photo', uploadedFile);
+
+          updateStep('step1', 'active', '上传照片...');
+          updateProgress(15);
+
+          const uploadResp = await fetch(API_BASE + '/upload', { method: 'POST', body: formData });
+          const uploadData = await uploadResp.json();
+
+          if (!uploadData.ok) {
+            updateStep('step1', '', '❌ ' + (uploadData.error || '上传失败'));
+            return;
+          }
+
+          currentTaskId = uploadData.task_id;
+          updateStep('step1', 'completed', '✅ 已上传');
+          updateStep('step2', 'active', 'AI生成中...');
+          updateProgress(30);
+
+          await pollTask(currentTaskId);
+
+        } catch (e) {
+          updateStep('step1', '', '❌ 请求失败: ' + e.message);
+          updateProgress(0);
+        }
+        return;
+      }
+
+      // 非视频模式 — 原模拟逻辑
+      const overlay = document.getElementById('modalOverlay');
+      const title = document.getElementById('modalTitle');
+      const desc = document.getElementById('modalDesc');
+      overlay.classList.add('active');
+
+      const steps = {
+        1: { t: '正在分析面部特征...', d: 'AI正在检测三庭五眼、面部轮廓和比例...' },
+        2: { t: '正在生成人像雕塑...', d: 'AI正在将照片转化为大理石雕塑质感...' },
+        3: { t: '正在生成3D旋转视频...', d: 'AI正在逐帧渲染360°骨相雕塑视频...' },
+        4: { t: '正在检索案例库...', d: 'AI正在匹配相似脸型的案例...' },
+        5: { t: '正在生成图文内容...', d: 'AI正在创作美学笔记和科普视频脚本...' },
+        6: { t: '正在获取最新趋势...', d: 'AI正在联网搜索医美行业热点...' }
+      };
+      const step = steps[currentMode] || steps[1];
+      title.textContent = step.t;
+      desc.textContent = step.d;
+
+      setTimeout(() => {
+        overlay.classList.remove('active');
+        showResults();
+      }, 2500);
+    }
+
+    async function pollTask(taskId) {
+      let attempts = 0;
+      while (attempts < 120) {
+        attempts++;
+        await new Promise(r => setTimeout(r, 3000));
+        try {
+          const resp = await fetch(API_BASE + '/task/' + taskId, { signal: AbortSignal.timeout(8000) });
+          const data = await resp.json();
+          if (!data.ok) { updateStep('step2', '', '❌ 查询失败'); return; }
+          updateProgress(data.progress || 0);
+          if (data.status === 'running') {
+            if (data.progress < 50) updateStep('step2', 'active', '雕塑生成中...');
+            else { updateStep('step2', 'completed', '✅ 雕塑完成'); updateStep('step3', 'active', '视频生成中...'); }
+          }
+          if (data.status === 'completed') {
+            updateStep('step2', 'completed', '✅ 雕塑完成');
+            updateStep('step3', 'completed', '✅ 视频已生成');
+            updateProgress(100);
+            if (data.video_url) showVideoResult(API_BASE.replace('/api', '') + data.video_url);
+            return;
+          }
+          if (data.status === 'failed') {
+            updateStep('step2', '', '❌ ' + (data.error || '生成失败'));
+            return;
+          }
+        } catch (e) {
+          updateStep('step2', '', '⚠️ 服务器连接中断: ' + e.message);
+        }
+      }
+      updateStep('step2', '', '⏰ 超时');
+    }
+
+    function showServerAlert() {
+      // 移除旧弹窗
+      const old = document.getElementById('serverAlert');
+      if (old) old.remove();
+
+      const alert = document.createElement('div');
+      alert.id = 'serverAlert';
+      alert.style.cssText = `
+        position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+        z-index: 5000; max-width: 600px; width: 90%;
+        background: var(--bg-card); border: 1px solid var(--gold-glow);
+        border-radius: 16px; padding: 28px 32px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        animation: modalRise 0.3s ease;
+      `;
+      alert.innerHTML = `
+        <div style="display:flex;align-items:flex-start;gap:16px;">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(212,168,75,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-server" style="color:var(--gold);font-size:20px;"></i>
+          </div>
+          <div style="flex:1;">
+            <h4 style="font-size:16px;margin-bottom:6px;">后端服务未运行</h4>
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.7;">
+              3D视频生成需要启动后端 API 服务。请按以下步骤操作：
+            </p>
+            <div style="margin:12px 0;padding:14px 16px;background:var(--bg-deep);border-radius:10px;font-size:13px;line-height:1.8;font-family:'JetBrains Mono',monospace;">
+              <div style="color:var(--gold);"># 1. 先设置 API Key</div>
+              <div style="color:var(--text-secondary);">export DOUBAO_API_KEY="你的Key"</div>
+              <div style="color:var(--gold);margin-top:6px;"># 2. 启动后端服务</div>
+              <div style="color:var(--text-secondary);">python video_server.py</div>
+            </div>
+            <p style="font-size:12px;color:var(--text-muted);">
+              服务启动后在浏览器刷新页面即可使用。
+            </p>
+            <button onclick="this.closest('#serverAlert').remove()" style="
+              margin-top:12px;padding:8px 20px;border-radius:20px;
+              background:var(--gold);color:var(--bg-deep);border:none;
+              font-size:13px;font-weight:600;cursor:pointer;
+            ">我知道了</button>
+          </div>
+          <button onclick="this.closest('#serverAlert').remove()" style="
+            width:28px;height:28px;border-radius:50%;border:1px solid var(--border-subtle);
+            background:transparent;color:var(--text-muted);cursor:pointer;
+            display:flex;align-items:center;justify-content:center;flex-shrink:0;
+          "><i class="fas fa-xmark" style="font-size:12px;"></i></button>
+        </div>
+      `;
+      document.body.appendChild(alert);
+      setTimeout(() => { const el = document.getElementById('serverAlert'); if (el) el.remove(); }, 20000);
+    }
+
+    function showVideoResult(videoUrl) {
+      const container = document.getElementById('videoPreviewContainer');
+      const source = document.getElementById('videoSource');
+      const player = document.getElementById('videoPlayer');
+      if (!container) return;
+      source.src = videoUrl;
+      player.load();
+      container.classList.add('visible');
+      container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('downloadVideoBtn').onclick = () => {
+        const a = document.createElement('a');
+        a.href = videoUrl; a.download = 'weimei_3d_sculpture_rotation.mp4'; a.click();
+      };
+    }
+
+    function resetVideoPipeline() {
+      toggleVideoPipeline(false);
+      const container = document.getElementById('videoPreviewContainer');
+      if (container) container.classList.remove('visible');
+      currentTaskId = null;
+      updateStep('step1', '', '等待中');
+      updateStep('step2', '', '等待中');
+      updateStep('step3', '', '等待中');
+      updateProgress(0);
+    }
+
+    // ===== FILE UPLOAD =====
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const previewImg = document.getElementById('previewImg');
+    const placeholderText = document.getElementById('placeholderText');
+
+    function handleFile(file) {
+      if (!file || !file.type.startsWith('image/')) { alert('请选择图片文件'); return; }
+      uploadedFile = file;
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewImg.src = e.target.result;
+        previewImg.style.display = 'block';
+        placeholderText.style.display = 'none';
+        document.querySelector('.upload-box h4').textContent = '✅ 照片已上传';
+        document.querySelector('.upload-box p').textContent = `${file.name} · 点击"开始生成"继续`;
+        dropZone.classList.remove('highlight');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    function resetUpload() {
+      uploadedFile = null;
+      previewImg.style.display = 'none';
+      placeholderText.style.display = 'block';
+      fileInput.value = '';
+      document.querySelector('.upload-box h4').textContent = '拖拽照片到此处';
+      document.querySelector('.upload-box p').textContent = '或点击下方按钮选择文件 · 支持 JPG / PNG / WebP';
+      document.getElementById('result-section').classList.remove('visible');
+    }
+
+    function showResults() {
+      const section = document.getElementById('result-section');
+      const grid = document.getElementById('resultGrid');
+      const desc = document.getElementById('resultDesc');
+      const data = modeResults[currentMode];
+      desc.textContent = `「${modeNames[currentMode]}」模式 · 基于上传照片的AI生成结果`;
+      grid.innerHTML = '';
+
+      data.items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'result-card fade-in';
+        card.innerHTML = `
+          <div class="result-img" style="background:var(--bg-deep);">
+            <div style="text-align:center;padding:20px;position:relative;z-index:1;">
+              <i class="fas ${item.icon}" style="font-size:40px;color:var(--gold);margin-bottom:12px;display:block;opacity:0.7;"></i>
+              <span style="color:var(--text-muted);font-size:13px;">AI生成模拟效果</span>
+            </div>
+          </div>
+          <div class="result-body"><h4>${item.title}</h4><p>${item.desc}</p></div>
+        `;
+        grid.appendChild(card);
+        requestAnimationFrame(() => card.classList.add('visible'));
+      });
+      section.classList.add('visible');
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ===== SCROLL ANIMATIONS =====
+    const observer = new IntersectionObserver(
+      (entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    function observeFadeElements() {
+      document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
+    }
+
+    // ===== NAV SCROLL =====
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // ===== INIT =====
+    renderCaseCategories();
+    renderCases();
+    renderTrends();
+    observeFadeElements();
+
+    // Re-observe when tab changes (case library)
+    const caseGrid = document.getElementById('caseGrid');
+    const caseObserver = new MutationObserver(() => {
+      document.querySelectorAll('#caseGrid .fade-in:not(.visible)').forEach(el => observer.observe(el));
+    });
+    caseObserver.observe(caseGrid, { childList: true });
+
+    console.log('🌑 薇美AI Pro Dark Edition loaded.');
+    console.log('⚠️ 安全声明：所有生成内容为AI美学模拟，不构成医疗建议。');
+    console.log('🔒 隐私承诺：数据仅本次使用，不会保存。');
+  </script>
+</body>
+</html>
