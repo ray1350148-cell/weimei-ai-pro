@@ -1629,21 +1629,84 @@
             addMsg('ai', `
               <span class="msg-avatar"><i class="fas fa-robot" style="font-size:10px;"></i></span>
               <strong style="color:var(--text-primary);">3D雕塑旋转视频已生成</strong> 🎬<br>
-              <span style="font-size:12px;color:var(--text-muted);">5秒 · 720P · 30fps</span>
+              <span style="font-size:12px;color:var(--text-muted);">纯白光影 · 匀速旋转 · 骨相标注</span>
               <span class="msg-label">通过 ImageGen + VideoGen 内置工具生成</span>
-              <div class="chat-video-result">
-                <video controls playsinline preload="metadata">
-                  <source src="generated-videos/A_classical_white_marble_bust__2026-07-14T16-23-37.mp4" type="video/mp4">
-                </video>
+              <div class="chat-video-result" style="position:relative;">
+                <div style="position:relative;overflow:hidden;">
+                  <video controls playsinline preload="metadata" id="sculptureVideo" style="width:100%;display:block;aspect-ratio:9/16;max-height:360px;object-fit:cover;">
+                    <source src="generated-videos/A_pure_white_Carrara_marble_bu_2026-07-14T17-02-40.mp4" type="video/mp4">
+                  </video>
+                  <!-- 箭头标注 -->
+                  <div class="arrow-marker" style="top:22%;left:42%;" data-label="眉弓">
+                    <div class="arrow-line" style="transform:rotate(-45deg);"></div>
+                    <span class="arrow-label">眉弓</span>
+                  </div>
+                  <div class="arrow-marker" style="top:32%;left:50%;" data-label="鼻骨">
+                    <div class="arrow-line" style="transform:rotate(0deg);height:24px;"></div>
+                    <span class="arrow-label">鼻骨</span>
+                  </div>
+                  <div class="arrow-marker" style="top:38%;left:30%;" data-label="颧弓">
+                    <div class="arrow-line" style="transform:rotate(30deg);"></div>
+                    <span class="arrow-label">颧弓</span>
+                  </div>
+                  <div class="arrow-marker" style="top:38%;left:70%;" data-label="颧弓">
+                    <div class="arrow-line" style="transform:rotate(-30deg);"></div>
+                    <span class="arrow-label">颧弓</span>
+                  </div>
+                  <div class="arrow-marker" style="top:68%;left:35%;" data-label="下颌角">
+                    <div class="arrow-line" style="transform:rotate(45deg);"></div>
+                    <span class="arrow-label">下颌角</span>
+                  </div>
+                  <div class="arrow-marker" style="top:68%;left:65%;" data-label="下颌角">
+                    <div class="arrow-line" style="transform:rotate(-45deg);"></div>
+                    <span class="arrow-label">下颌角</span>
+                  </div>
+                  <div class="arrow-marker" style="top:75%;left:50%;" data-label="颏部">
+                    <div class="arrow-line" style="transform:rotate(0deg);height:20px;"></div>
+                    <span class="arrow-label">颏部</span>
+                  </div>
+                </div>
                 <div class="video-actions">
-                  <button class="play-btn" onclick="this.parentElement.parentElement.querySelector('video').play()">
+                  <button class="play-btn" onclick="document.getElementById('sculptureVideo').play()">
                     <i class="fas fa-play"></i> 播放
                   </button>
-                  <button class="dl-btn" onclick="downloadVideo('generated-videos/A_classical_white_marble_bust__2026-07-14T16-23-37.mp4')">
+                  <button class="dl-btn" onclick="downloadVideo('generated-videos/A_pure_white_Carrara_marble_bu_2026-07-14T17-02-40.mp4')">
                     <i class="fas fa-download"></i> 下载
                   </button>
                 </div>
               </div>
+              <style>
+              .arrow-marker {
+                position:absolute;
+                pointer-events:none;
+                opacity:0;
+                animation:arrowFade 6s ease-in-out infinite;
+              }
+              .arrow-marker:nth-child(1) { animation-delay:0.5s; }
+              .arrow-marker:nth-child(2) { animation-delay:1.5s; }
+              .arrow-marker:nth-child(3) { animation-delay:2.5s; }
+              .arrow-marker:nth-child(4) { animation-delay:3.5s; }
+              .arrow-marker:nth-child(5) { animation-delay:4.5s; }
+              .arrow-marker:nth-child(6) { animation-delay:5.5s; }
+              .arrow-marker:nth-child(7) { animation-delay:6.5s; }
+              @keyframes arrowFade {
+                0%,100% { opacity:0; transform:translateY(4px); }
+                10%,80% { opacity:1; transform:translateY(0); }
+              }
+              .arrow-line {
+                width:2px;height:28px;
+                background:linear-gradient(to top,var(--gold),transparent);
+                margin:0 auto 4px;
+              }
+              .arrow-label {
+                font-size:10px;color:var(--gold);font-weight:600;
+                text-shadow:0 0 8px rgba(0,0,0,0.8);
+                background:rgba(0,0,0,0.5);padding:1px 8px;border-radius:6px;
+                letter-spacing:1px;
+                backdrop-filter:blur(2px);
+                white-space:nowrap;
+              }
+              </style>
             `);
           } else {
             addMsg('ai', `
