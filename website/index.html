@@ -2029,21 +2029,63 @@
       desc.textContent = `「${modeNames[currentMode]}」模式 · 基于上传照片的AI生成结果`;
       grid.innerHTML = '';
 
-      data.items.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'result-card fade-in';
-        card.innerHTML = `
-          <div class="result-img" style="background:var(--bg-deep);">
-            <div style="text-align:center;padding:20px;position:relative;z-index:1;">
-              <i class="fas ${item.icon}" style="font-size:40px;color:var(--gold);margin-bottom:12px;display:block;opacity:0.7;"></i>
-              <span style="color:var(--text-muted);font-size:13px;">AI生成模拟效果</span>
+      // Use real generated sculpture images
+      const sculptureImages = [
+        'sculptures/01_eye.png',
+        'sculptures/02_nose.png',
+        'sculptures/03_jaw.png',
+        'sculptures/04_chest.png',
+        'sculptures/06_youth.png',
+        'sculptures/07_skin.png',
+      ];
+
+      // For mode 1 (分析+模拟): show the user's uploaded photo + analysis overlay
+      if (currentMode === 1 && uploadedFile) {
+        data.items.forEach((item, i) => {
+          const card = document.createElement('div');
+          card.className = 'result-card fade-in';
+          const imgSrc = i === 0 ? null : sculptureImages[i % sculptureImages.length];
+          card.innerHTML = `
+            <div class="result-img" style="background:var(--bg-deep);overflow:hidden;">
+              ${i === 0 && uploadedFile
+                ? `<img src="${previewImg.src}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;filter:brightness(0.7);">
+                   <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%, transparent, rgba(0,0,0,0.3));"></div>
+                   <div style="position:relative;z-index:1;text-align:center;padding:20px;">
+                     <i class="fas ${item.icon}" style="font-size:36px;color:var(--gold);margin-bottom:10px;display:block;"></i>
+                     <span style="color:var(--text-muted);font-size:12px;">面部分析完成</span>
+                   </div>`
+                : `<div style="background-image:url('${imgSrc}');background-size:cover;background-position:center;position:absolute;inset:0;filter:brightness(0.6);"></div>
+                   <div style="position:relative;z-index:1;text-align:center;padding:20px;">
+                     <i class="fas ${item.icon}" style="font-size:36px;color:var(--gold);margin-bottom:10px;display:block;"></i>
+                     <span style="color:var(--text-muted);font-size:12px;">AI生成模拟效果</span>
+                   </div>`
+              }
             </div>
-          </div>
-          <div class="result-body"><h4>${item.title}</h4><p>${item.desc}</p></div>
-        `;
-        grid.appendChild(card);
-        requestAnimationFrame(() => card.classList.add('visible'));
-      });
+            <div class="result-body"><h4>${item.title}</h4><p>${item.desc}</p></div>
+          `;
+          grid.appendChild(card);
+          requestAnimationFrame(() => card.classList.add('visible'));
+        });
+      } else {
+        // Other modes: use real sculpture images as backgrounds
+        data.items.forEach((item, i) => {
+          const card = document.createElement('div');
+          card.className = 'result-card fade-in';
+          const imgSrc = sculptureImages[i % sculptureImages.length];
+          card.innerHTML = `
+            <div class="result-img" style="background:var(--bg-deep);overflow:hidden;">
+              <div style="background-image:url('${imgSrc}');background-size:cover;background-position:center;position:absolute;inset:0;filter:brightness(0.6) contrast(1.1);"></div>
+              <div style="position:relative;z-index:1;text-align:center;padding:20px;">
+                <i class="fas ${item.icon}" style="font-size:36px;color:var(--gold);margin-bottom:10px;display:block;"></i>
+                <span style="color:var(--text-muted);font-size:12px;">AI生成模拟效果</span>
+              </div>
+            </div>
+            <div class="result-body"><h4>${item.title}</h4><p>${item.desc}</p></div>
+          `;
+          grid.appendChild(card);
+          requestAnimationFrame(() => card.classList.add('visible'));
+        });
+      }
       section.classList.add('visible');
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
