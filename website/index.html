@@ -987,6 +987,39 @@
               颧骨 20-35% · 下颌线 40-60% · 苹果肌 15-30%
             </div>
           </div>
+
+          <!-- Stable Diffusion 集成面板 -->
+          <div style="margin-top:16px;padding:14px;border-radius:12px;background:linear-gradient(135deg,rgba(212,168,75,0.06),rgba(107,162,154,0.04));border:1px solid var(--border-subtle);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <i class="fas fa-bolt" style="color:var(--gold);font-size:14px;"></i>
+              <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Stable Diffusion 工作流</span>
+              <span style="font-size:10px;padding:2px 8px;border-radius:8px;background:var(--gold-glow);color:var(--gold);font-weight:600;">本地部署</span>
+            </div>
+
+            <div style="font-size:11px;color:var(--text-muted);line-height:1.7;">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+                <span style="padding:3px 10px;border-radius:8px;background:rgba(212,168,75,0.06);border:1px solid var(--border-subtle);">SDXL 1.0</span>
+                <span style="padding:3px 10px;border-radius:8px;background:rgba(212,168,75,0.06);border:1px solid var(--border-subtle);">ControlNet Canny</span>
+                <span style="padding:3px 10px;border-radius:8px;background:rgba(212,168,75,0.06);border:1px solid var(--border-subtle);">IP-Adapter</span>
+                <span style="padding:3px 10px;border-radius:8px;background:rgba(212,168,75,0.06);border:1px solid var(--border-subtle);">DPM++ 2M Karras</span>
+              </div>
+              <div class="sd-prompt-box" id="sdPromptBox" style="padding:10px;background:var(--bg-card);border-radius:8px;border:1px solid var(--border-subtle);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-secondary);cursor:pointer;" onclick="copySDPrompt()" title="点击复制">
+                <div style="color:var(--gold);font-size:9px;margin-bottom:4px;">⬇ 正向提示词 (Prompt) — 点击复制</div>
+                <div id="sdPromptText">masterpiece, best quality, photorealistic, 1girl, white Carrara marble bust sculpture, smooth marble texture, cinematic lighting, soft shadows, elegant, high detail, 8K</div>
+              </div>
+              <div style="margin-top:6px;padding:10px;background:var(--bg-card);border-radius:8px;border:1px solid var(--border-subtle);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">
+                <div style="color:var(--accent-rose);font-size:9px;margin-bottom:4px;">⬆ 负向提示词 (Negative Prompt)</div>
+                lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, jpeg artifacts, signature, watermark, blurry, deformed, ugly, duplicate
+              </div>
+              <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+                <span style="font-size:10px;color:var(--text-muted);">CFG: 7.0</span>
+                <span style="font-size:10px;color:var(--text-muted);">Steps: 30</span>
+                <span style="font-size:10px;color:var(--text-muted);">Denoising: 0.6</span>
+                <span style="font-size:10px;color:var(--text-muted);">Clip Skip: 1</span>
+                <span style="font-size:10px;color:var(--text-muted);">Sampler: DPM++ 2M Karras</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1978,6 +2011,7 @@
       } else {
         stats.innerHTML = '调整未开始';
       }
+      updateSDPrompt();
     }
 
     function resetBeauty() {
@@ -2010,6 +2044,48 @@
       beautySliders.forEach(id => { vals[beautyLabels[id]] = document.getElementById(id).value + '%'; });
       const desc = document.getElementById('resultDesc');
       desc.textContent = '美图设计参数已保留，将在AI雕塑生成中体现';
+      updateSDPrompt();
+    }
+
+    // ===== SD PROMPT GENERATOR =====
+    function updateSDPrompt() {
+      const vals = {};
+      beautySliders.forEach(id => {
+        vals[id] = parseInt(document.getElementById(id).value);
+      });
+
+      let features = [];
+      if (vals.bdSlim > 20) features.push(`slim face (${vals.bdSlim}%)`);
+      if (vals.bdChin > 20) features.push(`defined chin (${vals.bdChin}%)`);
+      if (vals.bdNose > 20) features.push(`high nose bridge (${vals.bdNose}%)`);
+      if (vals.bdCheek > 20) features.push(`reduced cheekbones (${vals.bdCheek}%)`);
+      if (vals.bdJaw > 20) features.push(`sharp jawline (${vals.bdJaw}%)`);
+      if (vals.bdApple > 20) features.push(`plump cheek volume (${vals.bdApple}%)`);
+
+      const prompt = [
+        'masterpiece, best quality, photorealistic, 1girl, ',
+        'white Carrara marble bust sculpture, smooth marble texture with subtle veining, ',
+        'cinematic museum lighting, soft golden rim light, dark elegant background, ',
+        'refined facial features, elegant expression, pink-tinted marble lips, ',
+        'ultra detailed, 8K, sharp focus, high detail, ',
+        features.length ? `facial features: ${features.join(', ')}` : '',
+        'canon eos r5, 85mm, f/1.4'
+      ].filter(Boolean).join(', ');
+
+      document.getElementById('sdPromptText').textContent = prompt;
+    }
+
+    function copySDPrompt() {
+      const text = document.getElementById('sdPromptText').textContent;
+      navigator.clipboard?.writeText(text).then(() => {
+        const box = document.getElementById('sdPromptBox');
+        box.style.borderColor = 'var(--gold)';
+        box.innerHTML = '<div style="color:var(--gold);font-size:11px;">✅ 已复制到剪贴板</div>';
+        setTimeout(() => {
+          box.style.borderColor = '';
+          box.innerHTML = `<div style="color:var(--gold);font-size:9px;margin-bottom:4px;">⬇ 正向提示词 (Prompt) — 点击复制</div><div id="sdPromptText">${text}</div>`;
+        }, 1500);
+      });
     }
 
     // Sync uploaded photo to beauty preview
