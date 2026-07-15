@@ -859,15 +859,17 @@
         <div class="beauty-preview">
           <div class="beauty-preview-header">
             <span id="beautyModeLabel">效果预览</span>
-            <span style="font-size:11px;color:var(--text-muted);">先在上方上传照片</span>
+            <label for="beautyUploadInput" style="cursor:pointer;padding:4px 14px;border-radius:12px;background:var(--gold-glow);color:var(--gold);font-size:11px;font-weight:600;">
+              <i class="fas fa-cloud-arrow-up"></i> 上传照片
+            </label>
+            <input type="file" id="beautyUploadInput" accept="image/*" style="display:none;" onchange="beautyUpload(event)">
           </div>
           <div class="beauty-canvas" id="beautyCanvas">
             <img id="beautyPreviewImg" alt="预览" style="display:none;width:100%;height:100%;object-fit:contain;position:relative;z-index:1;transition:all 0.3s ease;">
             <div class="placeholder" id="beautyPlaceholder">
               <i class="fas fa-image"></i>
-              <p>先上传照片再开始设计</p>
+              <p>点击上方「上传照片」开始设计</p>
             </div>
-            <!-- Adjustment overlay effects -->
             <div id="beautyOverlay" style="position:absolute;inset:0;z-index:2;pointer-events:none;transition:all 0.3s ease;"></div>
           </div>
           <div class="beauty-stats" id="beautyStats">
@@ -876,147 +878,175 @@
         </div>
 
         <!-- Right: Controls -->
-        <div class="beauty-controls">
+        <div class="beauty-controls" style="max-height:600px;overflow-y:auto;">
           <div class="beauty-controls-header">
             <i class="fas fa-sliders" style="color:var(--gold);margin-right:8px;"></i>
-            面部特征调节
+            面部特征精细调节 <span style="font-size:10px;color:var(--text-muted);font-weight:400;margin-left:auto;">12项</span>
           </div>
 
           <div class="beauty-slider-group">
+            <!-- 1. 瘦脸 -->
             <div class="beauty-slider-row">
-              <div class="beauty-slider-label">
-                <i class="fas fa-face-smile"></i>
-                <span>瘦脸</span>
-              </div>
-              <div class="beauty-slider-track">
-                <input type="range" class="beauty-range" id="bdSlim" min="0" max="100" value="0" oninput="updateBeauty()">
-              </div>
+              <div class="beauty-slider-label"><i class="fas fa-face-smile"></i><span>瘦脸</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdSlim" min="0" max="100" value="0" oninput="updateBeauty()"></div>
               <div class="beauty-slider-val" id="bdSlimV">0%</div>
             </div>
-
+            <!-- 2. 下巴 -->
             <div class="beauty-slider-row">
-              <div class="beauty-slider-label">
-                <i class="fas fa-chevron-down"></i>
-                <span>下巴</span>
-              </div>
-              <div class="beauty-slider-track">
-                <input type="range" class="beauty-range" id="bdChin" min="0" max="100" value="0" oninput="updateBeauty()">
-              </div>
+              <div class="beauty-slider-label"><i class="fas fa-chevron-down"></i><span>下巴</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdChin" min="0" max="100" value="0" oninput="updateBeauty()"></div>
               <div class="beauty-slider-val" id="bdChinV">0%</div>
             </div>
-
+            <!-- 3. 鼻梁高度 -->
             <div class="beauty-slider-row">
-              <div class="beauty-slider-label">
-                <i class="fas fa-arrow-up"></i>
-                <span>鼻梁</span>
-              </div>
-              <div class="beauty-slider-track">
-                <input type="range" class="beauty-range" id="bdNose" min="0" max="100" value="0" oninput="updateBeauty()">
-              </div>
+              <div class="beauty-slider-label"><i class="fas fa-arrow-up"></i><span>鼻梁高度</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdNose" min="0" max="100" value="0" oninput="updateBeauty()"></div>
               <div class="beauty-slider-val" id="bdNoseV">0%</div>
             </div>
-
+            <!-- 4. 鼻翼宽度 -->
             <div class="beauty-slider-row">
-              <div class="beauty-slider-label">
-                <i class="fas fa-eye"></i>
-                <span>眼部</span>
-              </div>
-              <div class="beauty-slider-track">
-                <input type="range" class="beauty-range" id="bdEye" min="0" max="100" value="0" oninput="updateBeauty()">
-              </div>
+              <div class="beauty-slider-label"><i class="fas fa-arrows-left-right"></i><span>鼻翼宽度</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdNoseW" min="0" max="100" value="0" oninput="updateBeauty()"></div>
+              <div class="beauty-slider-val" id="bdNoseWV">0%</div>
+            </div>
+            <!-- 5. 眼部放大 -->
+            <div class="beauty-slider-row">
+              <div class="beauty-slider-label"><i class="fas fa-eye"></i><span>眼部放大</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdEye" min="0" max="100" value="0" oninput="updateBeauty()"></div>
               <div class="beauty-slider-val" id="bdEyeV">0%</div>
             </div>
-
+            <!-- 6. 眉弓高度 -->
             <div class="beauty-slider-row">
-              <div class="beauty-slider-label">
-                <i class="fas fa-draw-polygon"></i>
-                <span>颧骨</span>
-              </div>
-              <div class="beauty-slider-track">
-                <input type="range" class="beauty-range" id="bdCheek" min="0" max="100" value="0" oninput="updateBeauty()">
-              </div>
+              <div class="beauty-slider-label"><i class="fas fa-chevron-up"></i><span>眉弓高度</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdBrow" min="0" max="100" value="0" oninput="updateBeauty()"></div>
+              <div class="beauty-slider-val" id="bdBrowV">0%</div>
+            </div>
+            <!-- 7. 颧骨 -->
+            <div class="beauty-slider-row">
+              <div class="beauty-slider-label"><i class="fas fa-draw-polygon"></i><span>颧骨内推</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdCheek" min="0" max="100" value="0" oninput="updateBeauty()"></div>
               <div class="beauty-slider-val" id="bdCheekV">0%</div>
             </div>
-
+            <!-- 8. 下颌线 -->
             <div class="beauty-slider-row">
-              <div class="beauty-slider-label">
-                <i class="fas fa-vector-polygon"></i>
-                <span>下颌线</span>
-              </div>
-              <div class="beauty-slider-track">
-                <input type="range" class="beauty-range" id="bdJaw" min="0" max="100" value="0" oninput="updateBeauty()">
-              </div>
+              <div class="beauty-slider-label"><i class="fas fa-vector-polygon"></i><span>下颌线</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdJaw" min="0" max="100" value="0" oninput="updateBeauty()"></div>
               <div class="beauty-slider-val" id="bdJawV">0%</div>
             </div>
-
+            <!-- 9. 咬肌缩小 -->
             <div class="beauty-slider-row">
-              <div class="beauty-slider-label">
-                <i class="fas fa-circle"></i>
-                <span>苹果肌</span>
-              </div>
-              <div class="beauty-slider-track">
-                <input type="range" class="beauty-range" id="bdApple" min="0" max="100" value="0" oninput="updateBeauty()">
-              </div>
+              <div class="beauty-slider-label"><i class="fas fa-compress"></i><span>咬肌缩小</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdMasseter" min="0" max="100" value="0" oninput="updateBeauty()"></div>
+              <div class="beauty-slider-val" id="bdMasseterV">0%</div>
+            </div>
+            <!-- 10. 苹果肌 -->
+            <div class="beauty-slider-row">
+              <div class="beauty-slider-label"><i class="fas fa-circle"></i><span>苹果肌</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdApple" min="0" max="100" value="0" oninput="updateBeauty()"></div>
               <div class="beauty-slider-val" id="bdAppleV">0%</div>
             </div>
-
+            <!-- 11. 法令纹减轻 -->
             <div class="beauty-slider-row">
-              <div class="beauty-slider-label">
-                <i class="fas fa-sun"></i>
-                <span>额头</span>
-              </div>
-              <div class="beauty-slider-track">
-                <input type="range" class="beauty-range" id="bdForehead" min="0" max="100" value="0" oninput="updateBeauty()">
-              </div>
+              <div class="beauty-slider-label"><i class="fas fa-minus"></i><span>法令纹减轻</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdNaso" min="0" max="100" value="0" oninput="updateBeauty()"></div>
+              <div class="beauty-slider-val" id="bdNasoV">0%</div>
+            </div>
+            <!-- 12. 嘴唇丰满 -->
+            <div class="beauty-slider-row">
+              <div class="beauty-slider-label"><i class="fas fa-lips"></i><span>嘴唇丰满</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdLip" min="0" max="100" value="0" oninput="updateBeauty()"></div>
+              <div class="beauty-slider-val" id="bdLipV">0%</div>
+            </div>
+            <!-- 13. 额头饱满 -->
+            <div class="beauty-slider-row">
+              <div class="beauty-slider-label"><i class="fas fa-sun"></i><span>额头饱满</span></div>
+              <div class="beauty-slider-track"><input type="range" class="beauty-range" id="bdForehead" min="0" max="100" value="0" oninput="updateBeauty()"></div>
               <div class="beauty-slider-val" id="bdForeheadV">0%</div>
             </div>
           </div>
 
           <div class="beauty-actions">
-            <button class="btn-primary" onclick="generateBeautySculpture()">
-              <i class="fas fa-wand-magic-sparkles"></i> 生成雕塑
-            </button>
-            <button class="btn-outline" onclick="resetBeauty()">
-              <i class="fas fa-rotate"></i> 重置
-            </button>
+            <button class="btn-primary" onclick="generateBeautySculpture()"><i class="fas fa-wand-magic-sparkles"></i> 生成3D雕塑</button>
+            <button class="btn-outline" onclick="resetBeauty()"><i class="fas fa-rotate"></i> 重置</button>
           </div>
           <div style="margin-top:12px;padding:12px 14px;border-radius:10px;background:var(--bg-deep);border:1px solid var(--border-subtle);">
-            <div style="font-size:12px;color:var(--text-muted);line-height:1.8;">
-              <strong style="color:var(--gold);">💡 医美参数参考</strong><br>
-              瘦脸 30-50% · 下巴 20-40% · 鼻梁 40-60%<br>
-              颧骨 20-35% · 下颌线 40-60% · 苹果肌 15-30%
+            <div style="font-size:11px;color:var(--text-muted);line-height:1.8;">
+              <strong style="color:var(--gold);">💡 医美参数参考范围</strong><br>
+              瘦脸30-50 · 下巴20-40 · 鼻梁40-60 · 鼻翼15-25 · 眼部20-35<br>
+              眉弓20-40 · 颧骨20-35 · 下颌线40-60 · 咬肌30-50 · 苹果肌15-30<br>
+              法令纹10-25 · 嘴唇15-30 · 额头15-30
             </div>
           </div>
 
-          <!-- Stable Diffusion 集成面板 -->
-          <div style="margin-top:16px;padding:14px;border-radius:12px;background:linear-gradient(135deg,rgba(212,168,75,0.06),rgba(107,162,154,0.04));border:1px solid var(--border-subtle);">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-              <i class="fas fa-bolt" style="color:var(--gold);font-size:14px;"></i>
-              <span style="font-size:13px;font-weight:600;color:var(--text-primary);">Stable Diffusion 工作流</span>
-              <span style="font-size:10px;padding:2px 8px;border-radius:8px;background:var(--gold-glow);color:var(--gold);font-weight:600;">本地部署</span>
+          <!-- ===== 3D 生成引擎面板 ===== -->
+          <div style="margin-top:16px;border-radius:12px;overflow:hidden;border:1px solid var(--border-subtle);">
+            <div style="padding:12px 14px;background:var(--bg-elevated);font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border-subtle);">
+              <i class="fas fa-cube" style="color:var(--gold);"></i> 3D 生成引擎
             </div>
 
-            <div style="font-size:11px;color:var(--text-muted);line-height:1.7;">
-              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-                <span style="padding:3px 10px;border-radius:8px;background:rgba(212,168,75,0.06);border:1px solid var(--border-subtle);">SDXL 1.0</span>
-                <span style="padding:3px 10px;border-radius:8px;background:rgba(212,168,75,0.06);border:1px solid var(--border-subtle);">ControlNet Canny</span>
-                <span style="padding:3px 10px;border-radius:8px;background:rgba(212,168,75,0.06);border:1px solid var(--border-subtle);">IP-Adapter</span>
-                <span style="padding:3px 10px;border-radius:8px;background:rgba(212,168,75,0.06);border:1px solid var(--border-subtle);">DPM++ 2M Karras</span>
+            <!-- 3DAI Studio -->
+            <div style="padding:12px 14px;border-bottom:1px solid var(--border-subtle);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <span style="font-size:12px;font-weight:600;color:var(--text-primary);">3DAI Studio</span>
+                <span style="font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(107,162,154,0.1);color:var(--accent-teal);">云端API</span>
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);line-height:1.7;">
+                <span style="display:block;">TRELLIS.2 — 上传图片 → 3D模型 (GLB)</span>
+                <span style="display:block;">Hunyuan Pro — 图片/文字 → 高质量3D + PBR</span>
+                <span style="display:flex;gap:4px;margin-top:6px;">
+                  <span style="padding:2px 8px;border-radius:6px;background:var(--bg-deep);">15-55积分</span>
+                  <span style="padding:2px 8px;border-radius:6px;background:var(--bg-deep);">25秒-6分钟</span>
+                  <span style="padding:2px 8px;border-radius:6px;background:var(--bg-deep);">GLB导出</span>
+                </span>
+                <div style="margin-top:6px;padding:8px 10px;background:var(--bg-deep);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);">
+                  <div style="color:var(--accent-teal);"># 图片转3D雕塑模型 (TRELLIS.2)</div>
+                  python 3daistudio.py trellis --image photo.jpg --textures -o sculpture.glb
+                </div>
+              </div>
+            </div>
+
+            <!-- 3D Cog -->
+            <div style="padding:12px 14px;border-bottom:1px solid var(--border-subtle);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <span style="font-size:12px;font-weight:600;color:var(--text-primary);">CellCog 3D Cog</span>
+                <span style="font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(201,123,110,0.1);color:var(--accent-rose);">AI智能体</span>
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);line-height:1.7;">
+                <span style="display:block;">任何输入 → AI分析 → 生成优化参考图 → 3D模型</span>
+                <span style="display:block;">支持批量生成，自动优化面部特征</span>
+                <span style="display:flex;gap:4px;margin-top:6px;">
+                  <span style="padding:2px 8px;border-radius:6px;background:var(--bg-deep);">文字/图片/草图</span>
+                  <span style="padding:2px 8px;border-radius:6px;background:var(--bg-deep);">PBR材质</span>
+                  <span style="padding:2px 8px;border-radius:6px;background:var(--bg-deep);">批量生成</span>
+                </span>
+                <div style="margin-top:6px;padding:8px 10px;background:var(--bg-deep);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);">
+                  <div style="color:var(--accent-rose);"># 对话智能体：照片 → 1:1 3D雕塑</div>
+                  "将这张照片中的人物转化为经典大理石<br>雕塑，保留五官特征，输出GLB格式带PBR材质"
+                </div>
+              </div>
+            </div>
+
+            <!-- SD Prompt -->
+            <div style="padding:12px 14px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <span style="font-size:12px;font-weight:600;color:var(--text-primary);">Stable Diffusion 提示词</span>
+                <span style="font-size:9px;padding:2px 8px;border-radius:8px;background:var(--gold-glow);color:var(--gold);">本地部署</span>
               </div>
               <div class="sd-prompt-box" id="sdPromptBox" style="padding:10px;background:var(--bg-card);border-radius:8px;border:1px solid var(--border-subtle);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-secondary);cursor:pointer;" onclick="copySDPrompt()" title="点击复制">
-                <div style="color:var(--gold);font-size:9px;margin-bottom:4px;">⬇ 正向提示词 (Prompt) — 点击复制</div>
-                <div id="sdPromptText">masterpiece, best quality, photorealistic, 1girl, white Carrara marble bust sculpture, smooth marble texture, cinematic lighting, soft shadows, elegant, high detail, 8K</div>
+                <div style="color:var(--gold);font-size:9px;margin-bottom:4px;">⬇ 正向提示词 — 点击复制</div>
+                <div id="sdPromptText">masterpiece, best quality, photorealistic...white Carrara marble bust sculpture...</div>
               </div>
               <div style="margin-top:6px;padding:10px;background:var(--bg-card);border-radius:8px;border:1px solid var(--border-subtle);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">
-                <div style="color:var(--accent-rose);font-size:9px;margin-bottom:4px;">⬆ 负向提示词 (Negative Prompt)</div>
+                <div style="color:var(--accent-rose);font-size:9px;margin-bottom:4px;">⬆ 负向提示词</div>
                 lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, jpeg artifacts, signature, watermark, blurry, deformed, ugly, duplicate
               </div>
-              <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+              <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
                 <span style="font-size:10px;color:var(--text-muted);">CFG: 7.0</span>
                 <span style="font-size:10px;color:var(--text-muted);">Steps: 30</span>
                 <span style="font-size:10px;color:var(--text-muted);">Denoising: 0.6</span>
                 <span style="font-size:10px;color:var(--text-muted);">Clip Skip: 1</span>
                 <span style="font-size:10px;color:var(--text-muted);">Sampler: DPM++ 2M Karras</span>
+                <span style="font-size:10px;color:var(--accent-teal);">Model: SDXL 1.0</span>
               </div>
             </div>
           </div>
@@ -1920,10 +1950,39 @@
 
     // ===== BEAUTY DESIGN =====
     const beautySliders = [
-      'bdSlim','bdChin','bdNose','bdEye','bdCheek','bdJaw','bdApple','bdForehead'
+      'bdSlim','bdChin','bdNose','bdNoseW','bdEye','bdBrow',
+      'bdCheek','bdJaw','bdMasseter','bdApple','bdNaso','bdLip','bdForehead'
     ];
     const beautyLabels = {
-      bdSlim:'瘦脸', bdChin:'下巴', bdNose:'鼻梁', bdEye:'眼部',
+      bdSlim:'瘦脸', bdChin:'下巴', bdNose:'鼻梁高度', bdNoseW:'鼻翼宽度', bdEye:'眼部放大',
+      bdBrow:'眉弓高度', bdCheek:'颧骨内推', bdJaw:'下颌线', bdMasseter:'咬肌缩小',
+      bdApple:'苹果肌', bdNaso:'法令纹减轻', bdLip:'嘴唇丰满', bdForehead:'额头饱满'
+    };
+
+    function beautyUpload(e) {
+      const file = e.target.files[0];
+      if (!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = document.getElementById('beautyPreviewImg');
+        const place = document.getElementById('beautyPlaceholder');
+        img.src = ev.target.result;
+        img.style.display = 'block';
+        place.style.display = 'none';
+        document.getElementById('beautyModeLabel').textContent = file.name + ' · 调整中';
+        document.getElementById('beautyStats').innerHTML = '照片已加载，拖拽滑块开始调整';
+
+        // Also sync to main upload
+        if (!uploadedFile) {
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          const input = document.getElementById('fileInput');
+          if (input) { input.files = dataTransfer.files; }
+          handleFile(file);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
       bdCheek:'颧骨', bdJaw:'下颌线', bdApple:'苹果肌', bdForehead:'额头'
     };
 
@@ -1939,64 +1998,62 @@
       });
 
       // Build CSS transforms based on sliders
-      const slim = vals.bdSlim / 100;
-      const chin = vals.bdChin / 100;
-      const nose = vals.bdNose / 100;
-      const eye = vals.bdEye / 100;
-      const cheek = vals.bdCheek / 100;
-      const jaw = vals.bdJaw / 100;
-      const apple = vals.bdApple / 100;
-      const forehead = vals.bdForehead / 100;
+      const n = v => (v || 0) / 100;
+      const slim = n(vals.bdSlim);
+      const chin = n(vals.bdChin);
+      const nose = n(vals.bdNose);
+      const noseW = n(vals.bdNoseW);
+      const eye = n(vals.bdEye);
+      const brow = n(vals.bdBrow);
+      const cheek = n(vals.bdCheek);
+      const jaw = n(vals.bdJaw);
+      const masseter = n(vals.bdMasseter);
+      const apple = n(vals.bdApple);
+      const naso = n(vals.bdNaso);
+      const lip = n(vals.bdLip);
+      const forehead = n(vals.bdForehead);
 
-      // Composite visual effects on the image
-      const scaleX = 1 - slim * 0.08;
+      const scaleX = 1 - slim * 0.08 - masseter * 0.05;
       const scaleY = 1 - chin * 0.03;
-      const contrast = 1 + nose * 0.15;
+      const contrast = 1 + nose * 0.15 + brow * 0.05;
       const brightness = 1 + eye * 0.05;
-      const saturate = 1 + apple * 0.1;
-      const blurAmt = cheek * 0.3;
+      const saturate = 1 + apple * 0.1 + lip * 0.05;
 
-      let transforms = [];
-      transforms.push(`scaleX(${scaleX})`);
-      transforms.push(`scaleY(${scaleY})`);
+      let transforms = [`scaleX(${scaleX})`, `scaleY(${scaleY})`];
 
-      // Apply to overlay for simulated region effects
       const overlay = document.getElementById('beautyOverlay');
-      let overlayGradients = [];
+      let g = [];
 
-      // Nose shadow
-      if (nose > 0) {
-        overlayGradients.push(`radial-gradient(ellipse 8% 20% at 50% 38%, rgba(0,0,0,${nose*0.15}) 0%, transparent 70%)`);
-      }
-
-      // Eye area brightness
-      if (eye > 0) {
-        overlayGradients.push(`radial-gradient(ellipse 30% 8% at 50% 30%, rgba(255,255,255,${eye*0.12}) 0%, transparent 60%)`);
-      }
-
-      // Cheekbone shadow
+      if (nose > 0) g.push(`radial-gradient(ellipse 8% 20% at 50% 38%, rgba(0,0,0,${nose*0.15}) 0%, transparent 70%)`);
+      if (noseW > 0) g.push(`radial-gradient(ellipse ${4+noseW*4}% 6% at 50% 38%, rgba(0,0,0,${noseW*0.08}) 0%, transparent 60%)`);
+      if (eye > 0) g.push(`radial-gradient(ellipse 30% 8% at 50% 30%, rgba(255,255,255,${eye*0.12}) 0%, transparent 60%)`);
       if (cheek > 0) {
-        overlayGradients.push(`radial-gradient(ellipse 15% 15% at 30% 45%, rgba(0,0,0,${cheek*0.1}) 0%, transparent 60%)`);
-        overlayGradients.push(`radial-gradient(ellipse 15% 15% at 70% 45%, rgba(0,0,0,${cheek*0.1}) 0%, transparent 60%)`);
+        g.push(`radial-gradient(ellipse 15% 15% at 30% 45%, rgba(0,0,0,${cheek*0.1}) 0%, transparent 60%)`);
+        g.push(`radial-gradient(ellipse 15% 15% at 70% 45%, rgba(0,0,0,${cheek*0.1}) 0%, transparent 60%)`);
       }
-
-      // Jawline shadow
-      if (jaw > 0) {
-        overlayGradients.push(`radial-gradient(ellipse 20% 10% at 50% 70%, rgba(0,0,0,${jaw*0.12}) 0%, transparent 60%)`);
+      if (jaw > 0) g.push(`radial-gradient(ellipse 20% 10% at 50% 70%, rgba(0,0,0,${jaw*0.12}) 0%, transparent 60%)`);
+      if (masseter > 0) {
+        g.push(`radial-gradient(ellipse 10% 12% at 28% 52%, rgba(0,0,0,${masseter*0.1}) 0%, transparent 60%)`);
+        g.push(`radial-gradient(ellipse 10% 12% at 72% 52%, rgba(0,0,0,${masseter*0.1}) 0%, transparent 60%)`);
       }
-
-      // Apple muscles highlight
       if (apple > 0) {
-        overlayGradients.push(`radial-gradient(ellipse 12% 10% at 38% 42%, rgba(255,200,150,${apple*0.08}) 0%, transparent 50%)`);
-        overlayGradients.push(`radial-gradient(ellipse 12% 10% at 62% 42%, rgba(255,200,150,${apple*0.08}) 0%, transparent 50%)`);
+        g.push(`radial-gradient(ellipse 12% 10% at 38% 42%, rgba(255,200,150,${apple*0.08}) 0%, transparent 50%)`);
+        g.push(`radial-gradient(ellipse 12% 10% at 62% 42%, rgba(255,200,150,${apple*0.08}) 0%, transparent 50%)`);
       }
-
-      // Forehead
-      if (forehead > 0) {
+      if (naso > 0) {
+        g.push(`radial-gradient(ellipse 3% 8% at 42% 48%, rgba(255,255,255,${naso*0.08}) 0%, transparent 50%)`);
+        g.push(`radial-gradient(ellipse 3% 8% at 58% 48%, rgba(255,255,255,${naso*0.08}) 0%, transparent 50%)`);
+      }
+      if (lip > 0) g.push(`radial-gradient(ellipse 10% 4% at 50% 54%, rgba(255,180,170,${lip*0.1}) 0%, transparent 50%)`);
+      if (forehead > 0) g.push(`radial-gradient(ellipse 20% 12% at 50% 18%, rgba(255,255,255,${forehead*0.06}) 0%, transparent 60%)`);
+      if (brow > 0) {
+        g.push(`radial-gradient(ellipse 10% 4% at 35% 24%, rgba(0,0,0,${brow*0.08}) 0%, transparent 60%)`);
+        g.push(`radial-gradient(ellipse 10% 4% at 65% 24%, rgba(0,0,0,${brow*0.08}) 0%, transparent 60%)`);
+      }
         overlayGradients.push(`radial-gradient(ellipse 20% 12% at 50% 18%, rgba(255,255,255,${forehead*0.06}) 0%, transparent 60%)`);
       }
 
-      overlay.style.background = overlayGradients.join(',') || 'none';
+      overlay.style.background = g.join(',') || 'none';
 
       img.style.transform = transforms.join(' ');
       img.style.filter = `contrast(${contrast}) brightness(${brightness}) saturate(${saturate})`;
@@ -2058,9 +2115,16 @@
       if (vals.bdSlim > 20) features.push(`slim face (${vals.bdSlim}%)`);
       if (vals.bdChin > 20) features.push(`defined chin (${vals.bdChin}%)`);
       if (vals.bdNose > 20) features.push(`high nose bridge (${vals.bdNose}%)`);
+      if (vals.bdNoseW > 20) features.push(`narrow nose (${vals.bdNoseW}%)`);
+      if (vals.bdEye > 20) features.push(`enlarged eyes (${vals.bdEye}%)`);
+      if (vals.bdBrow > 20) features.push(`defined brow bone (${vals.bdBrow}%)`);
       if (vals.bdCheek > 20) features.push(`reduced cheekbones (${vals.bdCheek}%)`);
       if (vals.bdJaw > 20) features.push(`sharp jawline (${vals.bdJaw}%)`);
+      if (vals.bdMasseter > 20) features.push(`reduced masseter (${vals.bdMasseter}%)`);
       if (vals.bdApple > 20) features.push(`plump cheek volume (${vals.bdApple}%)`);
+      if (vals.bdNaso > 20) features.push(`smooth nasolabial folds (${vals.bdNaso}%)`);
+      if (vals.bdLip > 20) features.push(`full lips (${vals.bdLip}%)`);
+      if (vals.bdForehead > 20) features.push(`smooth forehead (${vals.bdForehead}%)`);
 
       const prompt = [
         'masterpiece, best quality, photorealistic, 1girl, ',
