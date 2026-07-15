@@ -750,6 +750,7 @@
         <a href="#features">功能</a>
         <a href="#cases">案例库</a>
         <a href="#trends">资讯</a>
+        <a href="javascript:void(0)" onclick="openSettings()" title="设置" style="font-size:16px;padding:8px 12px;"><i class="fas fa-gear"></i></a>
         <a href="#upload-area" style="padding:8px 22px;background:linear-gradient(135deg,var(--gold),var(--amber));color:var(--bg-deep);border-radius:30px;font-size:13px;font-weight:600;">开始体验</a>
       </div>
     </div>
@@ -1481,6 +1482,82 @@
       © 2026 薇美AI Pro · 效果为AI模拟，不构成医疗建议 · Made with <i class="fas fa-heart" style="color:var(--gold);"></i>
     </div>
   </footer>
+
+  <!-- ==================== SETTINGS MODAL ==================== -->
+  <div class="article-overlay" id="settingsOverlay">
+    <div class="article-modal" style="max-width:520px;">
+      <div class="article-header" style="border-bottom:1px solid var(--border-subtle);padding:20px 28px;">
+        <button class="close-btn" onclick="closeSettings()"><i class="fas fa-xmark"></i></button>
+        <h2 style="font-size:20px;font-family:'DM Sans',sans-serif;">⚙️ 设置</h2>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">配置AI生成接口，即可在网页内直接生成图片和视频</p>
+      </div>
+      <div class="article-body" style="padding:24px 28px 28px;">
+        <!-- 后端地址 -->
+        <div style="margin-bottom:16px;">
+          <label style="font-size:13px;font-weight:600;color:var(--text-primary);display:block;margin-bottom:6px;">后端服务地址</label>
+          <input type="text" id="settingBackendUrl" value="http://localhost:5000" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--bg-deep);color:var(--text-primary);font-size:13px;outline:none;">
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">部署后端后填写服务器地址，例如 https://你的服务器.com</div>
+        </div>
+
+        <!-- AI 平台选择 -->
+        <div style="margin-bottom:16px;">
+          <label style="font-size:13px;font-weight:600;color:var(--text-primary);display:block;margin-bottom:6px;">AI 平台</label>
+          <select id="settingProvider" onchange="onProviderChange()" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--bg-deep);color:var(--text-primary);font-size:13px;outline:none;">
+            <option value="siliconflow">硅基流动 (SiliconFlow)</option>
+            <option value="toapis">ToAPIs (聚合网关)</option>
+            <option value="ark">火山引擎 Ark</option>
+            <option value="openai">OpenAI 兼容</option>
+          </select>
+        </div>
+
+        <!-- Base URL (仅openai兼容) -->
+        <div id="openaiBaseRow" style="margin-bottom:16px;display:none;">
+          <label style="font-size:13px;font-weight:600;color:var(--text-primary);display:block;margin-bottom:6px;">Base URL</label>
+          <input type="text" id="settingOpenaiBase" placeholder="https://api.openai.com/v1" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--bg-deep);color:var(--text-primary);font-size:13px;outline:none;">
+        </div>
+
+        <!-- API Key -->
+        <div style="margin-bottom:16px;">
+          <label style="font-size:13px;font-weight:600;color:var(--text-primary);display:block;margin-bottom:6px;">API Key</label>
+          <div style="display:flex;gap:8px;">
+            <input type="password" id="settingApiKey" placeholder="sk-..." style="flex:1;padding:10px 14px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--bg-deep);color:var(--text-primary);font-size:13px;outline:none;">
+            <button onclick="document.getElementById('settingApiKey').type=document.getElementById('settingApiKey').type==='password'?'text':'password'" style="padding:8px 12px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--bg-card);color:var(--text-muted);cursor:pointer;">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 图片模型 -->
+        <div style="margin-bottom:16px;">
+          <label style="font-size:13px;font-weight:600;color:var(--text-primary);display:block;margin-bottom:6px;">图片生成模型</label>
+          <select id="settingImageModel" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--bg-deep);color:var(--text-primary);font-size:13px;outline:none;">
+            <option value="black-forest-labs/FLUX.1-dev">FLUX.1-dev</option>
+            <option value="stabilityai/stable-diffusion-3-5-large">SD 3.5 Large</option>
+          </select>
+        </div>
+
+        <!-- 测试连接 -->
+        <div style="display:flex;gap:10px;margin-bottom:20px;">
+          <button onclick="testConnection()" style="flex:1;padding:10px;border-radius:24px;background:var(--gold);color:var(--bg-deep);border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.3s;">
+            <i class="fas fa-plug"></i> 测试连接
+          </button>
+          <button onclick="saveSettings()" style="flex:1;padding:10px;border-radius:24px;background:linear-gradient(135deg,var(--gold),var(--amber));color:var(--bg-deep);border:none;font-size:13px;font-weight:600;cursor:pointer;">
+            <i class="fas fa-floppy-disk"></i> 保存设置
+          </button>
+        </div>
+
+        <!-- 状态信息 -->
+        <div id="settingsStatus" style="padding:10px 14px;border-radius:10px;font-size:12px;display:none;"></div>
+
+        <div style="margin-top:16px;padding:12px;border-radius:10px;background:var(--bg-deep);border:1px solid var(--border-subtle);font-size:11px;color:var(--text-muted);line-height:1.7;">
+          <strong style="color:var(--gold);">🔒 隐私说明</strong><br>
+          API Key 仅存储在你的浏览器本地 (localStorage)，<br>
+          不会上传到任何服务器。每次请求时发送到<br>
+          你配置的后端地址进行代理调用。
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ==================== GENERATOR MODAL ==================== -->
   <div class="modal-overlay" id="modalOverlay">
@@ -2527,6 +2604,90 @@
         window.__pendingFileName = uploadedFile.name;
       };
       reader.readAsDataURL(uploadedFile);
+    }
+
+    // ===== 设置面板 =====
+    function openSettings() {
+      document.getElementById('settingsOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+      // 加载已保存的设置
+      const saved = JSON.parse(localStorage.getItem('weimei_settings') || '{}');
+      if (saved.backendUrl) document.getElementById('settingBackendUrl').value = saved.backendUrl;
+      if (saved.provider) document.getElementById('settingProvider').value = saved.provider;
+      if (saved.apiKey) document.getElementById('settingApiKey').value = saved.apiKey;
+      if (saved.imageModel) document.getElementById('settingImageModel').value = saved.imageModel;
+      if (saved.openaiBase) document.getElementById('settingOpenaiBase').value = saved.openaiBase;
+      onProviderChange();
+      document.getElementById('settingsStatus').style.display = 'none';
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function onProviderChange() {
+      const v = document.getElementById('settingProvider').value;
+      document.getElementById('openaiBaseRow').style.display = v === 'openai' ? 'block' : 'none';
+      // 更新模型选项
+      const sel = document.getElementById('settingImageModel');
+      if (v === 'siliconflow') {
+        sel.innerHTML = '<option value="black-forest-labs/FLUX.1-dev">FLUX.1-dev</option><option value="stabilityai/stable-diffusion-3-5-large">SD 3.5 Large</option>';
+      } else if (v === 'toapis') {
+        sel.innerHTML = '<option value="gemini-3-pro-image-preview">Gemini 3 Pro Image</option><option value="gpt-image-2">GPT Image 2</option><option value="seedream">Seedream</option>';
+      } else if (v === 'ark') {
+        sel.innerHTML = '<option value="doubao-seedream-4-5">豆包 Seedream 4.5</option>';
+      } else {
+        sel.innerHTML = '<option value="dall-e-3">DALL-E 3</option>';
+      }
+    }
+
+    function saveSettings() {
+      const settings = {
+        backendUrl: document.getElementById('settingBackendUrl').value,
+        provider: document.getElementById('settingProvider').value,
+        apiKey: document.getElementById('settingApiKey').value,
+        imageModel: document.getElementById('settingImageModel').value,
+        openaiBase: document.getElementById('settingOpenaiBase').value,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem('weimei_settings', JSON.stringify(settings));
+      showSettingsStatus('✅ 设置已保存', 'rgba(74,222,128,0.1)', '#4ADE80');
+    }
+
+    async function testConnection() {
+      const status = document.getElementById('settingsStatus');
+      status.style.display = 'block';
+      status.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在测试连接...';
+      status.style.background = 'var(--bg-deep)';
+      status.style.color = 'var(--text-muted)';
+
+      const backend = document.getElementById('settingBackendUrl').value;
+      try {
+        const resp = await fetch(`${backend}/api/providers`, { signal: AbortSignal.timeout(5000) });
+        const data = await resp.json();
+        if (data.ok) {
+          const providers = Object.values(data.providers).map(p => p.name).join('、');
+          showSettingsStatus(`✅ 后端连接成功！支持的平台: ${providers}`, 'rgba(74,222,128,0.1)', '#4ADE80');
+        } else {
+          showSettingsStatus('❌ 后端返回错误', 'rgba(201,123,110,0.1)', 'var(--accent-rose)');
+        }
+      } catch(e) {
+        showSettingsStatus(`❌ 连接失败: ${e.message}。请确认后端服务已启动。`, 'rgba(201,123,110,0.1)', 'var(--accent-rose)');
+      }
+    }
+
+    function showSettingsStatus(msg, bg, color) {
+      const el = document.getElementById('settingsStatus');
+      el.style.display = 'block';
+      el.style.background = bg;
+      el.style.color = color;
+      el.innerHTML = msg;
+    }
+
+    // 获取当前设置（供生成函数调用）
+    function getSettings() {
+      return JSON.parse(localStorage.getItem('weimei_settings') || '{}');
     }
 
     // 初始化：欢迎消息
