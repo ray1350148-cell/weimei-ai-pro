@@ -1086,9 +1086,25 @@
             <button class="btn-primary" onclick="startGeneration()">
               <i class="fas fa-wand-magic-sparkles" style="margin-right:6px;"></i>开始生成
             </button>
+            <button class="btn-gold" id="submitAIRequest" onclick="submitAIRequest()" style="display:none;">
+              <i class="fas fa-cloud-arrow-up" style="margin-right:6px;"></i>提交AI生成
+            </button>
             <button class="btn-outline" onclick="resetUpload()">
               <i class="fas fa-rotate" style="margin-right:6px;"></i>重新上传
             </button>
+          </div>
+          <!-- AI 请求状态 -->
+          <div id="requestStatus" style="display:none;margin-top:12px;padding:12px 16px;border-radius:12px;background:var(--bg-deep);border:1px solid var(--border-subtle);font-size:13px;line-height:1.7;">
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <i class="fas fa-clock" style="color:var(--gold);font-size:16px;margin-top:2px;"></i>
+              <div>
+                <div id="requestStatusMsg" style="color:var(--text-primary);font-weight:500;">请求已提交到AI处理队列</div>
+                <div style="color:var(--text-muted);font-size:12px;margin-top:4px;">
+                  回到 <strong>WorkBuddy 对话窗口</strong>，输入 <strong style="color:var(--gold);">「处理生成请求」</strong><br>
+                  小薇会自动处理所有排队中的请求
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div>
@@ -2312,6 +2328,10 @@
         document.querySelector('.upload-box p').textContent = `${file.name} · 点击"开始生成"继续`;
         dropZone.classList.remove('highlight');
 
+        // 显示"提交AI生成"按钮
+        const aiBtn = document.getElementById('submitAIRequest');
+        if (aiBtn) aiBtn.style.display = 'inline-flex';
+
         // Sync to beauty preview
         const bImg = document.getElementById('beautyPreviewImg');
         const bPlace = document.getElementById('beautyPlaceholder');
@@ -2487,6 +2507,26 @@
       a.href = path;
       a.download = 'weimei_sculpture_video.mp4';
       a.click();
+    }
+
+    // ===== 提交到AI处理队列 =====
+    function submitAIRequest() {
+      if (!uploadedFile) {
+        alert('请先上传一张照片');
+        return;
+      }
+      // 显示请求状态
+      const status = document.getElementById('requestStatus');
+      status.style.display = 'block';
+      status.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // 将照片数据存储到全局
+      const reader = new FileReader();
+      reader.onload = e => {
+        window.__pendingPhoto = e.target.result;
+        window.__pendingFileName = uploadedFile.name;
+      };
+      reader.readAsDataURL(uploadedFile);
     }
 
     // 初始化：欢迎消息
