@@ -2151,53 +2151,6 @@
         }, 1500);
       });
     }
-
-    // Sync uploaded photo to beauty preview
-    function syncBeautyPreview() {
-      const preview = document.getElementById('previewImg');
-      const beautyImg = document.getElementById('beautyPreviewImg');
-      const placeholder = document.getElementById('beautyPlaceholder');
-      if (preview && preview.src && preview.style.display !== 'none') {
-        beautyImg.src = preview.src;
-        beautyImg.style.display = 'block';
-        placeholder.style.display = 'none';
-      }
-    }
-
-    // Override handleFile to sync beauty
-    const _origHandleFile = handleFile || function(){};
-    function handleFile(file) {
-      if (!file || !file.type.startsWith('image/')) { alert('请选择图片文件'); return; }
-      uploadedFile = file;
-      const reader = new FileReader();
-      reader.onload = e => {
-        previewImg.src = e.target.result;
-        previewImg.style.display = 'block';
-        placeholderText.style.display = 'none';
-        document.querySelector('.upload-box h4').textContent = '✅ 照片已上传';
-        document.querySelector('.upload-box p').textContent = `${file.name} · 点击"开始生成"继续`;
-        dropZone.classList.remove('highlight');
-
-        // Sync to beauty preview
-        const bImg = document.getElementById('beautyPreviewImg');
-        const bPlace = document.getElementById('beautyPlaceholder');
-        if (bImg) {
-          bImg.src = e.target.result;
-          bImg.style.display = 'block';
-          if (bPlace) bPlace.style.display = 'none';
-        }
-
-        // Also sync to beauty design if we're on that section
-        const beautyStats = document.getElementById('beautyStats');
-        if (beautyStats) beautyStats.innerHTML = '照片已加载，滑动滑块开始调整';
-
-        // Update beauty mode label
-        const label = document.getElementById('beautyModeLabel');
-        if (label) label.textContent = file.name ? `${file.name} · 调整中` : '效果预览';
-      };
-      reader.readAsDataURL(file);
-    }
-
     function sendChatMsg() {
       const input = document.getElementById('chatInput2');
       const text = input.value.trim();
@@ -2360,6 +2313,15 @@
         document.querySelector('.upload-box h4').textContent = '✅ 照片已上传';
         document.querySelector('.upload-box p').textContent = `${file.name} · 点击"开始生成"继续`;
         dropZone.classList.remove('highlight');
+
+        // Sync to beauty preview
+        const bImg = document.getElementById('beautyPreviewImg');
+        const bPlace = document.getElementById('beautyPlaceholder');
+        if (bImg) { bImg.src = e.target.result; bImg.style.display = 'block'; if (bPlace) bPlace.style.display = 'none'; }
+        const bStats = document.getElementById('beautyStats');
+        if (bStats) bStats.innerHTML = '照片已加载，滑动滑块开始调整';
+        const bLabel = document.getElementById('beautyModeLabel');
+        if (bLabel) bLabel.textContent = '效果预览 · 调整中';
       };
       reader.readAsDataURL(file);
     }
