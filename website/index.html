@@ -1079,7 +1079,7 @@
             <h4>拖拽照片到此处</h4>
             <p>或点击下方按钮选择文件 · 支持 JPG / PNG / WebP</p>
             <input type="file" id="fileInput" accept="image/*" style="display:none;">
-            <button class="upload-btn" id="uploadBtn" type="button">
+            <button class="upload-btn" id="uploadBtn" type="button" onclick="document.getElementById('fileInput').click();event.stopPropagation();">
               <i class="fas fa-folder-open" style="margin-right:8px;"></i>选择照片
             </button>
           </div>
@@ -2431,7 +2431,7 @@
     dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
     // 只在点击空白区域时触发文件选择，避免按钮的双击冲突
     dropZone.addEventListener('click', e => { if (e.target === dropZone) fileInput.click(); });
-    document.getElementById('uploadBtn').addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+    // 改为直接内联调用避免事件绑定问题
 
     // ===== AI CHAT =====
     const sampleVideos = [
