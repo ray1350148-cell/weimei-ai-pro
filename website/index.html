@@ -1503,11 +1503,15 @@
         <div style="margin-bottom:16px;">
           <label style="font-size:13px;font-weight:600;color:var(--text-primary);display:block;margin-bottom:6px;">AI 平台</label>
           <select id="settingProvider" onchange="onProviderChange()" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border-subtle);background:var(--bg-deep);color:var(--text-primary);font-size:13px;outline:none;">
+            <option value="weimei">薇美AI引擎（内置 · 无需Key ✅）</option>
             <option value="siliconflow">硅基流动 (SiliconFlow)</option>
             <option value="toapis">ToAPIs (聚合网关)</option>
             <option value="ark">火山引擎 Ark</option>
             <option value="openai">OpenAI 兼容</option>
           </select>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+            选择「薇美AI引擎」无需 API Key，直接使用本对话的内置ImageGen/VideoGen能力
+          </div>
         </div>
 
         <!-- Base URL (仅openai兼容) -->
@@ -2629,9 +2633,15 @@
     function onProviderChange() {
       const v = document.getElementById('settingProvider').value;
       document.getElementById('openaiBaseRow').style.display = v === 'openai' ? 'block' : 'none';
+      // 显示/隐藏 API Key 输入
+      const keyRow = document.getElementById('settingApiKey').closest('div').parentElement;
+      keyRow.style.display = v === 'weimei' ? 'none' : 'block';
       // 更新模型选项
       const sel = document.getElementById('settingImageModel');
-      if (v === 'siliconflow') {
+      if (v === 'weimei') {
+        sel.innerHTML = '<option value="weimei-image">ImageGen 内置引擎 ✅</option><option value="weimei-video">VideoGen 内置引擎 ✅</option>';
+        document.getElementById('settingBackendUrl').value = '对话模式（无需后端）';
+      } else if (v === 'siliconflow') {
         sel.innerHTML = '<option value="black-forest-labs/FLUX.1-dev">FLUX.1-dev</option><option value="stabilityai/stable-diffusion-3-5-large">SD 3.5 Large</option>';
       } else if (v === 'toapis') {
         sel.innerHTML = '<option value="gemini-3-pro-image-preview">Gemini 3 Pro Image</option><option value="gpt-image-2">GPT Image 2</option><option value="seedream">Seedream</option>';
